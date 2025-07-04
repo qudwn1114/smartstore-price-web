@@ -1,0 +1,147 @@
+{% extends "layouts/system_base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<div class="content-wrapper">
+    <!-- Content -->
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="row g-6">
+            <!-- Gamification Card -->
+            <div class="col-md-12 col-xxl-8">
+            <div class="card h-100">
+                <div class="d-flex align-items-end row">
+                <div class="col-md-6 order-2 order-md-1">
+                    <div class="card-body">
+                    <h4 class="card-title mb-4">안녕하세요. <span class="fw-bold">{{user.profile.membername}}</span> 님! 👋</h4>
+                    <p class="mb-0">성공은 꾸준한 노력에서 시작됩니다! 🚀</p>
+                    <p>오늘의 한 걸음이 내일의 변화를 만듭니다.</p>
+                    <a href="javascript:;" class="btn btn-primary">View Profile</a>
+                    </div>
+                </div>
+                <div class="col-md-6 text-center text-md-end order-1 order-md-2">
+                    <div class="card-body pb-0 px-0 pt-2">
+                    <img
+                        src="{% static 'system/assets/img/illustrations/illustration-daisy-light.png' %}"
+                        height="186"
+                        class="scaleX-n1-rtl"
+                        alt="View Profile"/>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+            <!--/ Gamification Card -->
+
+            <div class="col-xxl-2 col-sm-6">
+            <div class="card h-100">
+                <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                    <div class="avatar">
+                        <div class="avatar-initial bg-label-primary rounded-3">
+                            <i class="ri-coin-line ri-24px"></i>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <a href="#"><i class="ri-chat-history-line text-primary"></i></a>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <h5 class="mb-1">사용자 금 시세</h5>
+                    <a
+                    href="javascript:;"
+                    data-bs-target="#editPriceModal"
+                    data-bs-toggle="modal">
+                    <p>
+                        1돈: <b id="don_price">{{gold_price.don_price|intcomma}}</b> 원
+                        <br>
+                        1g: <b id="price">{{gold_price.price|intcomma}}</b> 원
+                    </p>
+                    </a>
+                    <div class="badge bg-label-secondary rounded-pill">{{ gold_price.updated_at|timesince }} 전</div>
+                </div>
+                </div>
+            </div>
+            </div>
+            <div class="col-xxl-2 col-sm-6">
+            <div class="card h-100">
+                <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                    <div class="avatar">
+                        <div class="avatar-initial bg-label-success rounded-3">
+                            <b>N</b>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <a href="javascript:;" id="btnRefreshNaverPrice"><i class="ri-refresh-line text-success"></i></a>
+                    </div>
+                </div>
+                <div class="card-info">
+                    <h5 class="mb-1">네이버 금 시세</h5>
+                    <p>
+                        1돈: <b id="don_naver_price">{{gold_price.don_naver_price|intcomma}}</b> 원
+                        <br>
+                        1g: <b id="naver_price">{{gold_price.naver_price|intcomma}}</b> 원
+                    </p>
+                    <div class="badge bg-label-secondary rounded-pill">{{ gold_price.naver_updated_at|timesince }} 전</div>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <!-- / Content -->
+    <div class="modal fade" id="editPriceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-simple modal-edit-price">
+          <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body p-0">
+              <div class="text-center mb-6">
+                <h4 class="mb-2">금 시세 수정</h4>
+                <p class="mb-6">금 1돈 시세를 수정합니다.</p>
+              </div>
+              <form id="editPriceForm" class="row g-5" onsubmit="return false">
+                <div class="col-12">
+                    <div class="form-floating form-floating-outline">
+                      <input
+                        type="text"
+                        id="modalEditPrice"
+                        name="price"
+                        class="form-control"
+                        value="{{gold_price.don_price}}"
+                        placeholder="{{gold_price.don_price}}"/>
+                      <label for="modalEditPrice">금 1돈 시세 (원)</label>
+                    </div>
+                </div>
+                <div class="col-12 text-center d-flex flex-wrap justify-content-center gap-4 row-gap-4">
+                  <button type="button" id="btnEditPrice" class="btn btn-primary">저장</button>
+                  <button
+                    type="reset"
+                    class="btn btn-outline-secondary"
+                    data-bs-dismiss="modal"
+                    aria-label="Close">
+                    닫기
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+</div>
+
+<div id="loadingOverlay" class="position-fixed top-0 start-0 w-100 h-100 d-none bg-white bg-opacity-75 z-3">
+  <div class="d-flex justify-content-center align-items-center h-100">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="{% static 'system/assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
+<script src="{% static 'system/js/system_manage/script_main.js' %}"></script>
+{% endblock javascripts %}
