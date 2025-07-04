@@ -20,7 +20,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-import datetime, json, requests, os, time, platform
+import datetime, json, requests, os, time, platform, logging, traceback
 
 # Create your views here.
 class HomeView(TemplateView):
@@ -102,11 +102,11 @@ def update_naver_gold_price(request):
             system_os = platform.system()
             # Selenium 웹드라이버 설정 133.0.....
             if system_os == 'Windows':
-                chrome_driver_path = os.path.join(settings.BASE_DIR, 'drivers', 'chromedriver.exe')
+                chrome_driver_path = os.path.join(settings.BASE_DIR, 'chrome_drivers/windows', 'chromedriver.exe')
             elif system_os == 'Darwin':  # macOS
-                chrome_driver_path = os.path.join(settings.BASE_DIR, 'drivers', 'chromedriver')
+                chrome_driver_path = os.path.join(settings.BASE_DIR, 'chrome_drivers/mac', 'chromedriver')
             elif system_os == 'Linux':  # Linux
-                chrome_driver_path = os.path.join(settings.BASE_DIR, 'drivers', 'chromedriver')
+                chrome_driver_path = os.path.join(settings.BASE_DIR, 'chrome_drivers/linux', 'chromedriver')
             else:
                 raise Exception(f"Unsupported OS: {system_os}")
 
@@ -133,6 +133,8 @@ def update_naver_gold_price(request):
             gold_price.naver_updated_at = timezone.now()
             gold_price.save()
     except Exception:
+        logger = logging.getLogger('my')
+        logger.error(traceback.format_exc())
         return JsonResponse({'message': '네이버 금 시세를 불러오는데 실패했습니다.'}, status=400)
     return JsonResponse({'message': '네이버 금 시세가 업데이트 되었습니다.'}, status=200)
 
