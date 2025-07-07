@@ -56,3 +56,40 @@ class GoldPriceHistory(models.Model):
 
     class Meta:
         db_table='gold_price_history'
+
+
+class Product(models.Model):
+    origin_product_no = models.BigIntegerField(verbose_name='원 상품 번호', unique=True)
+    channel_product_no = models.BigIntegerField(verbose_name='채널 상품 번호', unique=True)
+    name = models.CharField(max_length=255, verbose_name='상품명')
+    gold = models.DecimalField(max_digits=10, decimal_places=5, verbose_name='중량')
+    labor_cost = models.PositiveIntegerField(verbose_name='공임비')
+    sub_cost = models.PositiveIntegerField(verbose_name='부가비용')
+    markup_rate = models.DecimalField(max_digits=10, decimal_places=5, verbose_name='판매가 배율')
+    price = models.PositiveIntegerField(verbose_name='판매가')
+    option_group_quantity = models.PositiveIntegerField(verbose_name='옵션 그룹 수량', default=0)
+    option_group_name1 = models.CharField(max_length=255, verbose_name='옵션 그룹명1', null=True)
+    option_group_name2 = models.CharField(max_length=255, verbose_name='옵션 그룹명2', null=True)
+    option_group_name3 = models.CharField(max_length=255, verbose_name='옵션 그룹명3', null=True)
+    option_group_flag = models.BooleanField(default=False, verbose_name='옵션 그룹 업데이트 여부')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='생성일')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='수정일')
+
+    class Meta:
+        db_table='product'
+
+class GroupOption(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='options')
+    option_id = models.BigIntegerField(verbose_name='옵션 ID', unique=True)
+    option_name1 = models.CharField(max_length=255, verbose_name='옵션명1', null=True)
+    option_name2 = models.CharField(max_length=255, verbose_name='옵션명2', null=True)
+    option_name3 = models.CharField(max_length=255, verbose_name='옵션명3', null=True)
+    gold = models.DecimalField(max_digits=10, decimal_places=5, verbose_name='중량')
+    sub_cost = models.IntegerField(verbose_name='부가비용')
+    markup_rate = models.DecimalField(max_digits=10, decimal_places=5, verbose_name='판매가 배율')
+    price = models.IntegerField(verbose_name='판매가')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='생성일')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='수정일')
+
+    class Meta:
+        db_table='group_option'

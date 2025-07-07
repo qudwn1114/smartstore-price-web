@@ -80,3 +80,94 @@ def get_valid_token():
     if token:
         return token
     return get_new_token()  # 기존 토큰이 없거나 만료되었으면 새로 발급
+
+
+def get_product_by_channel_product_no(access_token, channel_product_no):
+    URL = "https://api.commerce.naver.com/external/v1/products/search"
+    payload = {
+        "searchKeywordType": "CHANNEL_PRODUCT_NO",
+        "channelProductNos": [channel_product_no],
+        "page": 1,
+        "size": 1,
+        "orderType": "NO",
+    }
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
+    response = requests.post(URL, json=payload, headers=headers)  # 💡 JSON 자동 변환!
+
+    if response.status_code != 200:
+        raise Exception(f"API 요청 실패: {response.status_code}, {response.text}")
+    
+    data = response.json()
+
+    # 조회 결과가 없는 경우 예외 발생
+    if not data.get("contents"):
+        raise ValueError(f"상품을 찾을 수 없습니다. 채널 상품 번호: {channel_product_no}")
+    
+    # 상품 정보 추출
+    channel_product_info = data["contents"][0]["channelProducts"][0]
+    origin_product_no = channel_product_info["originProductNo"]
+    name = channel_product_info["name"]
+
+    return origin_product_no, name
+
+
+def get_option_by_channel_product_no(access_token, channel_product_no):
+    
+    URL = f"https://api.commerce.naver.com/external/v2/products/channel-products/{channel_product_no}"
+    
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json"
+    }
+    response = requests.get(URL, headers=headers)  # 💡 JSON 자동 변환!
+
+    if response.status_code != 200:
+        raise Exception(f"API 요청 실패: {response.status_code}, {response.text}")
+    
+    data = response.json()
+
+    # 조회 결과가 없는 경우 예외 발생
+    origin_product = data.get("originProduct")
+    if not origin_product:
+        raise ValueError(f"상품을 찾을 수 없습니다. 채널 상품 번호: {channel_product_no}")
+
+    # detailAttribute 가져오기
+    detail_attribute = origin_product.get("detailAttribute")
+    if not detail_attribute:
+        raise ValueError(f"상품 상세 정보를 찾을 수 없습니다. 채널 상품 번호: {channel_product_no}")
+
+    # 조회 결과가 없는 경우 예외 발생
+    option_info = detail_attribute.get("optionInfo")
+    if not option_info:
+        option_data = {
+            "option_group_quantity": 0,
+            "option_name1": None,
+            "option_name2": None,
+            "option_name3": None,
+            "options": []
+        }
+        return option_data
+    
+    group_names = option_info.get("optionCombinationGroupNames", {})
+    option_combinations = option_info.get("optionCombinations", [])
+    option_data = {
+        "option_group_quantity": len(group_names),
+        "option_group_name1": group_names.get("optionGroupName1", None),
+        "option_group_name2": group_names.get("optionGroupName2", None),
+        "option_group_name3": group_names.get("optionGroupName3", None),
+        "options": []
+    }
+
+    for option in option_combinations:
+        option_data["options"].append({
+            "option_id": option.get("id"),
+            "option_name1": option.get("optionName1", None),
+            "option_name2": option.get("optionName2", None),
+            "option_name3": option.get("optionName3", None),
+            "price": option.get("price", 0)
+        })
+
+    return option_data

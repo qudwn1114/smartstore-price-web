@@ -1,7 +1,8 @@
 from django.urls import path
 
 from django.contrib.auth.views import LogoutView
-from system_manage.views.system_manage_views.auth_views import HomeView, LoginView, PermissionDeniedView, NotFoundView, update_gold_price, update_naver_gold_price
+from system_manage.views.system_manage_views.auth_views import HomeView, LoginView, PermissionDeniedView, NotFoundView, update_gold_price, update_naver_gold_price,\
+    create_product, edit_product, delete_product, get_option, edit_option, fetch_option
 from system_manage.views.system_manage_views.summernote_views import summernote_image_upload_view
 app_name='system_manage'
 urlpatterns = [
@@ -13,6 +14,14 @@ urlpatterns = [
 
     path('gold-price/', update_gold_price),
     path('gold-price/naver/', update_naver_gold_price),
+
+    path('product/create/', create_product),
+    path('product/edit/', edit_product),
+    path('product/delete/', delete_product),
+
+    path('product/<int:product_id>/option/', get_option),
+    path('product/<int:product_id>/option/edit/', edit_option),
+    path('product/<int:product_id>/option/fetch/', fetch_option),
 
     path('summernote/upload-image/', summernote_image_upload_view),
 ]
