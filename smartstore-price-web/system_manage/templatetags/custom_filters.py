@@ -1,6 +1,6 @@
 from decimal import Decimal
 from django import template
-from django.utils import timezone
+from django.utils import timezone, timesince
 
 register = template.Library()
 
@@ -17,3 +17,12 @@ def is_birthday(birthday):
         return False
     today = timezone.localdate()
     return birthday.month == today.month and birthday.day == today.day
+
+@register.filter
+def timesince_custom(value):
+    if not value:
+        return ''
+    delta = timezone.now() - value
+    if delta.total_seconds() < 60:
+        return "방금 전"
+    return timesince.timesince(value) + " 전"

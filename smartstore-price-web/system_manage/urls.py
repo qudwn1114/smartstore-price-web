@@ -1,10 +1,12 @@
 from django.urls import path
 
 from django.contrib.auth.views import LogoutView
-from system_manage.views.system_manage_views.auth_views import HomeView, LoginView, PermissionDeniedView, NotFoundView, update_gold_price, update_naver_gold_price,\
-    create_product, edit_product, delete_product, get_option, edit_option, fetch_option, bulk_update_product
-from system_manage.views.system_manage_views.summernote_views import summernote_image_upload_view
+from system_manage.views.system_manage_views.auth_views import HomeView, LoginView, PermissionDeniedView, NotFoundView, update_gold_price, update_naver_gold_price
 from system_manage.views.system_manage_views.user_views import UserDetailView
+from system_manage.views.system_manage_views.product_views import create_product, edit_product, delete_product, bulk_update_product
+from system_manage.views.system_manage_views.option_views import get_option, edit_option, fetch_option
+from system_manage.views.system_manage_views.apply_views import create_apply_task, polling_apply_task, apply_product, bulk_apply_product
+
 app_name='system_manage'
 urlpatterns = [
     path('', HomeView.as_view(), name='home'),
@@ -20,6 +22,11 @@ urlpatterns = [
     path('product/edit/', edit_product),
     path('product/delete/', delete_product),
     path('product/bulk-update/', bulk_update_product),
+
+    path('apply-task/create/', create_apply_task),
+    path('apply-task/<int:apply_task_id>/polling/', polling_apply_task),
+    path('product/apply/', apply_product),
+    path('product/bulk-apply/', bulk_apply_product),
 
     path('product/<int:product_id>/option/', get_option),
     path('product/<int:product_id>/option/edit/', edit_option),

@@ -94,3 +94,13 @@ class GroupOption(models.Model):
 
     class Meta:
         db_table='group_option'
+
+class ApplyTaskHistory(models.Model):
+    progress = models.PositiveSmallIntegerField(default=0)
+    status = models.BooleanField(default=False)
+    status_message = models.CharField(max_length=255, default="작업 준비 중 입니다.")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='생성일')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='수정일')
+
+    class Meta:
+        db_table='apply_task_history'

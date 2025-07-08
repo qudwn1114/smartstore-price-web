@@ -65,7 +65,7 @@
                         1g: <b id="price">{{gold_price.price|intcomma}}</b> 원
                     </p>
                     </a>
-                    <div class="badge bg-label-secondary rounded-pill">{{ gold_price.updated_at|timesince }} 전</div>
+                    <div class="badge bg-label-secondary rounded-pill">{{ gold_price.updated_at|timesince_custom }}</div>
                 </div>
                 </div>
             </div>
@@ -90,7 +90,7 @@
                         <br>
                         1g: <b id="naver_price">{{gold_price.naver_price|intcomma}}</b> 원
                     </p>
-                    <div class="badge bg-label-secondary rounded-pill">{{ gold_price.naver_updated_at|timesince }} 전</div>
+                    <div class="badge bg-label-secondary rounded-pill">{{ gold_price.naver_updated_at|timesince_custom }}</div>
                 </div>
                 </div>
             </div>
@@ -104,7 +104,7 @@
                     data-bs-target="#createProductModal"
                     data-bs-toggle="modal"><span><i class="ri-add-line me-2"></i>상품 등록</span></a>
               <button class="btn btn-label-primary btn-sm" id="btnBulkUpdate" data-don-price="{{gold_price.don_price}}"><span><i class="ri-refresh-line me-2"></i>상품 시세 일괄 적용</span></button>
-              <button class="btn btn-label-success btn-sm" id="btnBulkApply"><span><i class="ri-arrow-up-down-line me-2"></i>네이버 판매가 일괄 변경</span></button>
+              <button class="btn btn-label-success btn-sm" id="btnBulkApply"><span><i class="ri-stock-line me-2"></i>네이버 판매가 일괄 변경</span></button>
             </div>
           </div>
           <div class="card-body">
@@ -122,7 +122,7 @@
               <table class="table table-sm table-hover">
                 <thead>
                   <tr>
-                    <th>상품번호 <a href="?search_keyword={{search_keyword}}&sort=channel_product_no&order={% if order == 'asc' and sort == 'channel_product_no' %}desc{% else %}asc{% endif %}">{% if sort == 'channel_product_no' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
+                    <th>채널상품번호 <a href="?search_keyword={{search_keyword}}&sort=channel_product_no&order={% if order == 'asc' and sort == 'channel_product_no' %}desc{% else %}asc{% endif %}">{% if sort == 'channel_product_no' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
                     <th>상품명</th>
                     <th>중량 <a href="?search_keyword={{search_keyword}}&sort=gold&order={% if order == 'asc' and sort == 'gold' %}desc{% else %}asc{% endif %}">{% if sort == 'gold' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
                     <th>공임비 <a href="?search_keyword={{search_keyword}}&sort=labor_cost&order={% if order == 'asc' and sort == 'labor_cost' %}desc{% else %}asc{% endif %}">{% if sort == 'labor_cost' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
@@ -191,6 +191,7 @@
                         <div class="dropdown">
                           <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line"></i></button>
                           <div class="dropdown-menu">
+                            <a class="dropdown-item btn-apply" href="javascript:;" data-product-id="{{i.id}}" data-name="{{i.name}}" data-option-group-flag="{{i.option_group_flag}}"><i class="ri-upload-2-line me-1"></i> 네이버 판매가 변경</a>
                             <a class="dropdown-item" href="javascript:;" data-bs-target="#editProductModal" data-bs-toggle="modal" data-product-id="{{i.id}}" data-channel-product-no="{{i.channel_product_no}}" data-name="{{i.name}}" data-gold="{{i.gold|strip_decimal}}" data-labor-cost="{{i.labor_cost}}" data-sub-cost="{{i.sub_cost}}" data-markup-rate="{{i.markup_rate|strip_decimal}}"><i class="ri-pencil-line me-1"></i> 수정</a>
                             <a class="dropdown-item btn-delete" href="javascript:;" data-product-id="{{i.id}}" data-name="{{i.name}}"><i class="ri-delete-bin-line me-1"></i> 삭제</a>
                           </div>
@@ -432,7 +433,27 @@
         </div>
       </div>
     </div>
-
+    <div class="modal fade" id="progressModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <form class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="progressModalTitle">네이버 판매가격 업데이트</h5>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col mb-6 mt-2">
+                <div class="progress bg-label-primary">
+                  <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" 
+                  style="width: 0%" aria-valuenow="0"
+                  aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <span id="progressModalDescription">작업 준비 중 입니다.</span>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
 </div>
 
 <div id="loadingOverlay" class="position-fixed top-0 start-0 w-100 h-100 d-none bg-white bg-opacity-75 z-3">
@@ -447,7 +468,7 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 <script src="{% static 'system/assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
-<script src="{% static 'system/js/system_manage/script_main.js' %}"></script>
+<script src="{% static 'system/js/system_manage/script_main.js' %}?"></script>
 <script src="{% static 'system/js/system_manage/script_product.js' %}"></script>
 <script src="{% static 'system/js/system_manage/script_option.js' %}"></script>
 {% endblock javascripts %}

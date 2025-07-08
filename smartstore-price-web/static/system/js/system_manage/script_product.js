@@ -208,13 +208,58 @@ document.querySelectorAll('.btn-delete').forEach(function (btn) {
             const productId = this.dataset.productId;
             const productName = this.dataset.name;
             customConfirm({
-                title: `${productName}\n상품을 삭제 하시겠습니까?`,
+                title: `상품 삭제 하시겠습니까?`,
+                text: `${productName}`,
                 confirmButtonText: "확인",
                 cancelButtonText: "취소",
                 onConfirm: function() {
                     $.ajax({
                         type: "POST",
                         url: "/system-manage/product/delete/",
+                        headers: {
+                            'X-CSRFToken': csrftoken
+                        },
+                        data: {
+                            product_id: productId
+                        },
+                        success: function(data) {
+                            customAlert({ title: 'Success!', text: data.message, icon: 'success', onClose: () => { location.reload(); } });
+                        },
+                        error: function(error) {
+                            if (error.status == 401) {
+                                customAlert({ title: 'Error!', text: '로그인 해주세요.', icon: 'error' });
+                            }
+                            else if (error.status == 403) {
+                                customAlert({ title: 'Error!', text: '권한이 없습니다.', icon: 'error' });
+                            }
+                            else {
+                                customAlert({ title: 'Error!', text: error.status + JSON.stringify(error.responseJSON), icon: 'error' });
+                            }
+                        }
+                    });
+                },
+                onCancel: function() {
+                    // 취소 시 아무 동작도 하지 않음
+                }
+            });
+        });
+    }
+);
+
+document.querySelectorAll('.btn-apply').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            const productId = this.dataset.productId;
+            const productName = this.dataset.name;
+            const optionGroupFlag = this.dataset.optionGroupFlag
+            customConfirm({
+                title: `네이버 상품 가격을 업데이트 하시겠습니까?`,
+                text: `${productName} ${optionGroupFlag === 'True' ? '(옵션 포함)' : '(옵션 미포함)'}`,
+                confirmButtonText: "확인",
+                cancelButtonText: "취소",
+                onConfirm: function() {
+                    $.ajax({
+                        type: "POST",
+                        url: "/system-manage/product/apply/",
                         headers: {
                             'X-CSRFToken': csrftoken
                         },
