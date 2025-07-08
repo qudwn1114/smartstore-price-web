@@ -1,0 +1,240 @@
+{% extends "layouts/system_base.html" %}
+{% load static %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'system/assets/vendor/libs/bootstrap-datepicker/bootstrap-datepicker.css' %}" />
+{% endblock stylesheets %}
+
+{% block content %}
+  <!-- Content wrapper -->
+  <div class="content-wrapper">
+    <!-- Content -->
+    <div class="container-xxl flex-grow-1 container-p-y">
+      <div class="row">
+        <!-- User Sidebar -->
+        <div class="col-xl-5 col-lg-5 col-md-5 order-1 order-md-0">
+          <!-- User Card -->
+          <div class="card mb-6">
+            <div class="card-body pt-12">
+              <div class="user-avatar-section">
+                <div class="d-flex align-items-center flex-column">
+                  <img
+                    class="img-fluid rounded mb-4"
+                    {% if data.profile.gender == 'MALE' %}
+                      src="{% static 'system/assets/img/avatars/1.png' %}"
+                    {% elif data.profile.gender == 'FEMALE' %}
+                      src="{% static 'system/assets/img/avatars/2.png' %}"
+                    {% else %}
+                      src="{% static 'system/assets/img/avatars/3.png' %}"
+                    {% endif %}
+                    height="120"
+                    width="120"
+                    alt="User avatar" />
+                  <div class="user-info text-center">
+                    <h5>{{data.username}}</h5>
+                    <span class="badge bg-label-primary rounded-pill"><i class="ri-calendar-line me-2 ri-24px"></i>가입일 {{data.date_joined}}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="info-container">
+                <small class="card-text text-uppercase text-muted small">About</small>
+                <ul class="list-unstyled my-3 py-1">
+                  <li class="d-flex align-items-center mb-4"><i class="ri-user-3-line ri-24px"></i><span class="fw-medium mx-2">Name:</span> <span>{{data.profile.membername}}</span></li>
+                  <li class="d-flex align-items-center mb-4"><i class="ri-cake-2-line ri-24px"></i><span class="fw-medium mx-2">Birth:</span> <span>{{data.profile.birth}}</span></li>
+                  <li class="d-flex align-items-center mb-4"><i class="ri-check-line ri-24px"></i><span class="fw-medium mx-2">Status:</span> 
+                    {% if data.is_active %}
+                    <span class="badge bg-label-success rounded-pill">Active</span>
+                    {% else %}
+                    <span class="badge bg-label-danger rounded-pill">Inactive</span>
+                    {% endif %}
+                  </li>
+                  <li class="d-flex align-items-center mb-4"><i class="ri-star-smile-line ri-24px"></i><span class="fw-medium mx-2">Role:</span> 
+                    {% if data.is_superuser %}
+                        <span>Admin</span>
+                    {% else %}
+                        <span>Member</span>
+                    {% endif %}
+                  </li>
+                </ul>
+                <small class="card-text text-uppercase text-muted small">Contacts</small>
+                <ul class="list-unstyled my-3 py-1">
+                  <li class="d-flex align-items-center mb-2"><i class="ri-mail-open-line ri-24px"></i><span class="fw-medium mx-2">Email:</span> <span>{{data.email}}</span></li>
+                </ul>
+                <div class="d-flex justify-content-center">
+                  <a
+                    href="javascript:;"
+                    class="btn btn-primary me-4"
+                    data-bs-target="#editUser"
+                    data-bs-toggle="modal"
+                    >수정</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- /User Card -->
+        </div>
+        <!--/ User Sidebar -->
+
+        <!-- User Content -->
+        <div class="col-xl-7 col-lg-7 col-md-7 order-0 order-md-1">
+          <!-- Change Password -->
+          <div class="card mb-6">
+            <h5 class="card-header">Change Password</h5>
+            <div class="card-body">
+              <form id="formChangePassword" method="POST" onsubmit="return false">
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                  <h5 class="alert-heading mb-1">Ensure that these requirements are met</h5>
+                  <span>비밀번호는 영문,숫자 포함 8~16자리로 입력해주세요.</span>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div class="row gx-5">
+                  <div class="mb-3 col-12 col-sm-6 form-password-toggle">
+                    <div class="input-group input-group-merge">
+                      <div class="form-floating form-floating-outline">
+                        <input
+                          class="form-control"
+                          type="password"
+                          id="new_password1"
+                          name="new_password1"
+                          placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
+                        <label for="new_password1">New Password</label>
+                      </div>
+                      <span class="input-group-text cursor-pointer text-heading"
+                        ><i class="ri-eye-off-line"></i
+                      ></span>
+                    </div>
+                  </div>
+                  <div class="mb-3 col-12 col-sm-6 form-password-toggle">
+                    <div class="input-group input-group-merge">
+                      <div class="form-floating form-floating-outline">
+                        <input
+                          class="form-control"
+                          type="password"
+                          name="new_password2"
+                          id="new_password2"
+                          placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;" />
+                        <label for="new_password2">Confirm New Password</label>
+                      </div>
+                      <span class="input-group-text cursor-pointer text-heading"
+                        ><i class="ri-eye-off-line"></i
+                      ></span>
+                    </div>
+                  </div>
+                  <div>
+                    <button type="button" id="btnPassword" class="btn btn-primary me-2" disabled>Change Password</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <!--/ Change Password -->
+        </div>
+        <!--/ User Content -->
+      </div>
+
+      <!-- Modals -->
+      <!-- Edit User Modal -->
+      <div class="modal fade" id="editUser" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-simple modal-edit-user">
+          <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-body p-0">
+              <div class="text-center mb-6">
+                <h4 class="mb-2">Edit User Information</h4>
+                <p class="mb-6">Updating user details.</p>
+              </div>
+              <form id="editUserForm" class="row g-5" onsubmit="return false">
+                <div class="col-12">
+                    <div class="form-floating form-floating-outline">
+                      <input
+                        type="text"
+                        id="modalEditUsername"
+                        name="username"
+                        class="form-control"
+                        value="{{data.username}}"
+                        placeholder="{{data.username}}" disabled/>
+                      <label for="modalEditUsername">아이디</label>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div class="form-floating form-floating-outline">
+                    <input
+                      type="text"
+                      id="modalEditMembername"
+                      name="membername"
+                      class="form-control"
+                      value="{{data.profile.membername}}"
+                      placeholder="{{data.profile.membername}}" />
+                    <label for="modalEditMembername">이름</label>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-floating form-floating-outline">
+                        <input type="text" class="form-control" placeholder="{{data.profile.birth|date:'Y-m-d'}}" id="modalEditBirth" name="birth" value="{{data.profile.birth|date:'Y-m-d'}}"/>
+                        <label for="modalEditBirth">생년월일</label>
+                    </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-floating form-floating-outline">
+                    <input
+                      type="email"
+                      id="modalEditEmail"
+                      name="email"
+                      class="form-control"
+                      value="{{data.email}}"
+                      placeholder="{{data.email}}" />
+                    <label for="modalEditEmail">Email</label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-floating form-floating-outline">
+                    <select
+                      id="modalEditGender"
+                      name="gender"
+                      class="form-select"
+                      aria-label="Default select example">
+                      <option value="" {% if not data.profile.gender %} selected {% endif %}>None</option>
+                      <option value="MALE" {% if data.profile.gender == 'MALE' %} selected {% endif %}>남자</option>
+                      <option value="FEMALE" {% if data.profile.gender == 'FEMALE' %} selected {% endif %}>여자</option>
+                    </select>
+                    <label for="modalEditGender">Gender</label>
+                  </div>
+                </div>         
+                <div class="col-12 text-center d-flex flex-wrap justify-content-center gap-4 row-gap-4">
+                  <button type="button" id="btnEdit" class="btn btn-primary">저장</button>
+                  <button
+                    type="reset"
+                    class="btn btn-outline-secondary"
+                    data-bs-dismiss="modal"
+                    aria-label="Close">
+                    닫기
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /Modals -->
+    </div>
+    <!-- / Content -->
+  </div>
+  <!-- Content wrapper -->
+{% endblock %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="{% static 'system/assets/vendor/libs/bootstrap-datepicker/bootstrap-datepicker.js' %}"></script>
+<script src="{% static 'system/assets/vendor/libs/bootstrap-datepicker/locales/bootstrap-datepicker.ko.min.js' %}"></script>
+<script>
+    $("#modalEditBirth").datepicker({ 
+      format: "yyyy-mm-dd",
+      language: "ko",  // 한글 설정
+      autoclose: true, // 날짜 선택 후 자동 닫힘
+      endDate: "today", // 오늘 이후 날짜 선택 불가
+      todayHighlight: true // 오늘 날짜 강조 표시
+    });
+</script>
+<script src="{% static 'system/js/user_manage/script_user_detail.js' %}?v=20250529"></script>
+{% endblock javascripts %}

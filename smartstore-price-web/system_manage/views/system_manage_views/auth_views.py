@@ -52,6 +52,15 @@ class HomeView(TemplateView):
             'updated_at': gold_price.updated_at,
             'naver_updated_at': gold_price.naver_updated_at
         }
+        order = request.GET.get('order', 'asc')
+        sort = request.GET.get('sort', 'gold')
+        context['order'] = order
+        context['sort'] = sort
+        if order == 'desc':
+            ordering = [f'-{sort}', 'gold'] if sort != 'gold' else ['-gold', 'price']
+        else:
+            ordering = [sort, 'gold'] if sort != 'gold' else ['gold', 'price']
+
         search_keyword = request.GET.get('search_keyword', '').strip()
         context['search_keyword'] = search_keyword
         query = Q()
@@ -67,11 +76,11 @@ class HomeView(TemplateView):
                 F('gold') / 3.75,
                 output_field=DecimalField(max_digits=10, decimal_places=5)
             )
-        ).filter(query).values(
+        ).filter(query).order_by(*ordering).values(
             'id', 'origin_product_no', 'channel_product_no', 'name', 'gold',
             'labor_cost', 'sub_cost', 'markup_rate', 'price',
-            'option_group_quantity', 'option_group_flag', 'option_group_name1', 'option_group_name2', 'option_group_name3', 'gold_don').order_by('-created_at')
-
+            'option_group_quantity', 'option_group_flag', 'option_group_name1', 'option_group_name2', 'option_group_name3', 'gold_don')
+        
         context['product_list'] = product_list
         context['total_product_count'] = product_list.count()
 
@@ -82,7 +91,7 @@ class HomeView(TemplateView):
 def update_gold_price(request):
     try:
         price = int(request.POST['price'])
-        new_price = int(price/3.75)
+        new_price = int(round(price/3.75))
         with transaction.atomic():
             try:
                 gold_price = GoldPrice.objects.get(id=1)
@@ -524,4 +533,44 @@ def fetch_option(request, *args, **kwargs):
         return JsonResponse({'message': f'동기화 실패 : {e}'}, status=400)
 
     return JsonResponse({'message': '옵션 동기화 완료!'}, status=200)
-    
+
+
+
+@require_http_methods(["POST"])
+@permission_required(raise_exception=True)
+def bulk_update_product(request):
+    don = int(request.POST['don'])
+    try:
+        gold_price = GoldPrice.objects.get(id=1).price
+    except GoldPrice.DoesNotExist:
+        return JsonResponse({'message': 'Gold price not found.'}, status=400)
+    if don != int(gold_price * 3.75):
+        return JsonResponse({'message': '1돈의 금액이 일치하지 않습니다. 새로고침 후 다시 시도해주세요.'}, status=400)
+    products = Product.objects.all()
+    group_options = GroupOption.objects.all()
+    now = timezone.now()
+    try:
+        with transaction.atomic():
+            for product in products:
+                unit_cost = (gold_price * product.gold) + product.labor_cost + product.sub_cost
+                raw_price = unit_cost * product.markup_rate
+                price = round(raw_price / 1000) * 1000
+                product.price = price
+                product.updated_at = now
+            Product.objects.bulk_update(products, ['price', 'updated_at'])
+
+            # 옵션 가격 업데이트
+            for group_option in group_options:
+                unit_cost = gold_price * group_option.gold + group_option.sub_cost
+                raw_price = unit_cost * group_option.markup_rate
+                price = round(raw_price / 1000) * 1000
+                if abs(price) > group_option.product.price * 0.5:
+                    raise ValueError(f"{group_option.product.name} 옵션의 가격이 상품 가격의 50%를 초과합니다.")
+                group_option.price = price
+                group_option.updated_at = now
+            GroupOption.objects.bulk_update(group_options, ['price', 'updated_at'])
+    except ValueError as e:
+        return JsonResponse({'message': str(e)}, status=400)
+    except Exception as e:
+        return JsonResponse({'message': f'업데이트 실패 : {e}'}, status=400)
+    return JsonResponse({'message': '일괄 적용 되었습니다.'}, status=200)

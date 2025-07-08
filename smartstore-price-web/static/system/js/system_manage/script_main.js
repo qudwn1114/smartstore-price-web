@@ -3,8 +3,10 @@ const price = document.getElementById('price');
 const editPriceModal = document.getElementById('editPriceModal');
 const btnEditPrice = document.getElementById("btnEditPrice");
 const btnRefreshNaverPrice = document.getElementById("btnRefreshNaverPrice");
-let isLoading = false;
+const btnBulkUpdate = document.getElementById("btnBulkUpdate");
+const btnBulkApply = document.getElementById("btnBulkApply");
 
+let isLoading = false;
 
 function showLoading() {
   document.getElementById('loadingOverlay').classList.remove('d-none');
@@ -186,6 +188,45 @@ btnRefreshNaverPrice.addEventListener("click", function(e) {
                 error: function(error) {
                     isLoading = false;
                     hideLoading(); // 👈 로딩 숨김
+                    if (error.status == 401) {
+                        customAlert({ title: 'Error!', text: '로그인 해주세요.', icon: 'error' });
+                    }
+                    else if (error.status == 403) {
+                        customAlert({ title: 'Error!', text: '권한이 없습니다.', icon: 'error' });
+                    }
+                    else {
+                        customAlert({ title: 'Error!', text: error.status + JSON.stringify(error.responseJSON), icon: 'error' });
+                    }
+                }
+            });
+        },
+        onCancel: function() {
+            // 취소 시 아무 동작도 하지 않음
+        }
+    });
+});
+
+
+
+btnBulkUpdate.addEventListener("click", function(e) {
+    const don = btnBulkUpdate.getAttribute("data-don-price");
+    customConfirm({
+        title: "시세를 일괄 적용 하시겠습니까?",
+        text: `1돈 : ${numberWithCommas(don)}원`,
+        confirmButtonText: "확인",
+        cancelButtonText: "취소",
+        onConfirm: function() {
+            $.ajax({
+                type: "POST",
+                url: "/system-manage/product/bulk-update/",
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                data: {don: don},
+                success: function(data) {
+                    customAlert({ title: 'Success!', text: data.message, icon: 'success', onClose: () => { location.reload(); } });
+                },
+                error: function(error) {
                     if (error.status == 401) {
                         customAlert({ title: 'Error!', text: '로그인 해주세요.', icon: 'error' });
                     }

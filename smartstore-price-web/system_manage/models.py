@@ -6,6 +6,7 @@ from django.dispatch import receiver
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
+    birth = models.DateField(null=True, verbose_name='생년월일', default='2000-01-01')
     membername = models.CharField(default='', max_length=50, verbose_name='회원명')
     gender = models.CharField(null=True, max_length=10, verbose_name='성별', choices=(('MALE', '남성'), ('FEMALE', '여성')))
 
