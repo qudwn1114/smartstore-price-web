@@ -135,6 +135,7 @@ def update_naver_gold_price(request):
 #     crawl_target, created = CrawlTarget.objects.get_or_create(
 #         id=1,  # Assuming there's only one record for gold price
 #         defaults={
+#             'name': 'naver_gold_price',
 #             'url': 'https://m.stock.naver.com/marketindex/home/metals',
 #             'xpath': '//*[@id="content"]/div[2]/ul/li[2]/a/span[1]'
 #         }
