@@ -122,6 +122,7 @@
               <table class="table table-sm table-hover">
                 <thead>
                   <tr>
+                    <th></th>
                     <th>상품명  <a href="?search_keyword={{search_keyword}}&sort=name&order={% if order == 'asc' and sort == 'name' %}desc{% else %}asc{% endif %}">{% if sort == 'name' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
                     <th>판매가 <a href="?search_keyword={{search_keyword}}&sort=price&order={% if order == 'asc' and sort == 'price' %}desc{% else %}asc{% endif %}">{% if sort == 'price' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
                     <th>중량 <a href="?search_keyword={{search_keyword}}&sort=gold&order={% if order == 'asc' and sort == 'gold' %}desc{% else %}asc{% endif %}">{% if sort == 'gold' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
@@ -136,6 +137,11 @@
                   {% if product_list %}
                     {% for i in product_list %}
                     <tr>  
+                      <td>
+                        <a href="https://smartstore.naver.com/jewelria/products/{{i.channel_product_no}}" target="_blank">
+                        <span class="badge rounded-pill bg-label-primary px-2 py-1_5"><i class="icon-base ri ri-store-2-line icon-16px my-50"></i></span>
+                        </a>
+                      </td>
                       <td>
                         <div class="d-flex justify-content-start align-items-center">
                             <div class="d-flex flex-column">
@@ -202,7 +208,7 @@
                     {% endfor %}
                   {% else %}
                     <tr>
-                        <td class="text-center" colspan='8'>데이터가 없습니다.</td>
+                        <td class="text-center" colspan='9'>데이터가 없습니다.</td>
                     </tr>
                   {% endif %}              
                 </tbody>
@@ -469,7 +475,7 @@
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
 <script src="{% static 'system/assets/vendor/libs/apex-charts/apexcharts.js' %}"></script>
-<script src="{% static 'system/js/system_manage/script_main.js' %}?"></script>
-<script src="{% static 'system/js/system_manage/script_product.js' %}"></script>
-<script src="{% static 'system/js/system_manage/script_option.js' %}"></script>
+<script src="{% static 'system/js/system_manage/script_main.js' %}?v=1"></script>
+<script src="{% static 'system/js/system_manage/script_product.js' %}?v=1"></script>
+<script src="{% static 'system/js/system_manage/script_option.js' %}?v=1"></script>
 {% endblock javascripts %}

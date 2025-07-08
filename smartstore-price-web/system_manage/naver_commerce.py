@@ -171,3 +171,60 @@ def get_option_by_channel_product_no(access_token, channel_product_no):
         })
 
     return option_data
+
+def product_multi_update(access_token, products):
+    URL = "https://api.commerce.naver.com/external/v1/products/origin-products/multi-update"
+    headers = {
+        'Authorization': f"Bearer {access_token}",
+        'Content-Type': "application/json"
+    }
+    # multiProductUpdateRequestVos 리스트 초기화
+    multi_product_update_request_vos = []
+
+    # products 리스트를 돌면서 payload 생성
+    for product in products:
+        product_data = {
+            "originProductNo": product['originProductNo'],  # 상품 번호
+            "multiUpdateTypes": ["SALE_PRICE"],  # 업데이트 항목
+            "productSalePrice": {
+                "salePrice": product['salePrice']  # 판매 가격
+            }
+        }
+        multi_product_update_request_vos.append(product_data)
+
+    # 전체 payload 생성
+    payload = {
+        "multiProductUpdateRequestVos": multi_product_update_request_vos
+    }
+    # PATCH 요청
+    response = requests.patch(URL, json=payload, headers=headers)
+
+    if response.status_code == 200:
+        print("상품 업데이트 성공!")
+    else:
+        raise Exception(f"API 요청 실패: {response.status_code}, {response.text}")
+    
+
+def option_stock(access_token, origin_product_no, sale_price, option_combinations):
+    URL = f"https://api.commerce.naver.com/external/v1/products/origin-products/{origin_product_no}/option-stock"
+    payload = {
+        "productSalePrice": {
+            "salePrice": sale_price
+        },
+        "optionInfo": {
+            "optionCombinations": option_combinations,
+        }
+    }
+
+    headers = {
+        'Authorization': f"Bearer {access_token}",
+        'Content-Type': "application/json"
+    }
+
+    response = requests.put(URL, json=payload, headers=headers)
+
+    if response.status_code != 200:
+        raise Exception(f"API 요청 실패: {response.status_code}, {response.text}")
+    
+    data = response.json()
+    print(data)

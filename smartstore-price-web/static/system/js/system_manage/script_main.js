@@ -221,6 +221,8 @@ btnBulkUpdate.addEventListener("click", function(e) {
         confirmButtonText: "확인",
         cancelButtonText: "취소",
         onConfirm: function() {
+            isLoading = true;
+            showLoading(); // 👈 로딩 띄움
             $.ajax({
                 type: "POST",
                 url: "/system-manage/product/bulk-update/",
@@ -232,6 +234,8 @@ btnBulkUpdate.addEventListener("click", function(e) {
                     customAlert({ title: 'Success!', text: data.message, icon: 'success', onClose: () => { location.reload(); } });
                 },
                 error: function(error) {
+                    isLoading = false;
+                    hideLoading(); // 👈 로딩 숨김
                   btnBulkUpdate.disabled = false;
                     if (error.status == 401) {
                         customAlert({ title: 'Error!', text: '로그인 해주세요.', icon: 'error' });
