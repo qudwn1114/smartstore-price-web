@@ -79,7 +79,7 @@
         <!-- User Content -->
         <div class="col-xl-7 col-lg-7 col-md-7 order-0 order-md-1">
           <!-- Change Password -->
-          <div class="card mb-6">
+          <div class="card mb-5">
             <h5 class="card-header">Change Password</h5>
             <div class="card-body">
               <form id="formChangePassword" method="POST" onsubmit="return false">
@@ -129,8 +129,83 @@
             </div>
           </div>
           <!--/ Change Password -->
+          <!-- Recent Devices -->
+          <div class="card mb-5">
+            <h5 class="card-header">Recent Login Devices</h5>
+            <div class="table-responsive table-border-bottom-0">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th class="text-truncate">Browser</th>
+                    <th class="text-truncate">Device</th>
+                    <th class="text-truncate">IP</th>
+                    <th class="text-truncate">Login Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% if login_history %}
+                  {% for i in login_history %}
+                  <tr>
+                    <td class="text-truncate">
+                      {% if i.browser == 'Chrome' %}
+                      <img
+                        src="{% static 'system/assets/img/icons/brands/chrome.png' %}"
+                        alt="Chrome"
+                        class="me-4"
+                        width="22"
+                        height="22" />
+                      {% elif i.browser == 'Safari' %}
+                      <img
+                        src="{% static 'system/assets/img/icons/brands/safari.png' %}"
+                        alt="Safari"
+                        class="me-4"
+                        width="22"
+                        height="22" />
+                      {% elif i.browser == 'Firefox' %}
+                      <img
+                        src="{% static 'system/assets/img/icons/brands/firefox.png' %}"
+                        alt="Firefox"
+                        class="me-4"
+                        width="22"
+                        height="22" />
+                      {% elif i.browser == 'Opera' %}
+                      <img
+                        src="{% static 'system/assets/img/icons/brands/opera.png' %}"
+                        alt="Opera"
+                        class="me-4"
+                        width="22"
+                        height="22" />
+                      {% else %}
+                      <img
+                        src="{% static 'system/assets/img/icons/brands/edge.png' %}"
+                        alt="Edge"
+                        class="me-4"
+                        width="22"
+                        height="22" />
+                      {% endif %}
+                        
+                        <span class="text-heading">{{i.browser}} on {{i.os}}</span>
+                    </td>
+                    <td class="text-truncate">{{i.device}}</td>
+                    <td class="text-truncate">{{i.ip}}</td>
+                    <td class="text-truncate">{{i.created_at}}</td>
+                  </tr>
+
+                  {% endfor %}
+                  {% else %}
+                  <tr>
+                      <td class="text-center" colspan='4'>데이터가 없습니다.</td>
+                  </tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!--/ Recent Devices -->
         </div>
         <!--/ User Content -->
+        
+
       </div>
 
       <!-- Modals -->

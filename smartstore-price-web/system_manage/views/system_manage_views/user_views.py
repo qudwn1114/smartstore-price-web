@@ -13,6 +13,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from system_manage.decorators import permission_required
 from system_manage.views.system_manage_views.auth_views import validate_username, validate_phone, validate_birth, validate_password
+from system_manage.models import LoginHistory
 import json, uuid
 
 
@@ -27,6 +28,8 @@ class UserDetailView(View):
         pk = kwargs.get('pk')
         data = get_object_or_404(User, pk=pk)
         context['data'] = data
+        login_history = LoginHistory.objects.filter(user=data).order_by('-id').values('ip', 'browser', 'os', 'device', 'is_mobile', 'created_at')[:4]
+        context['login_history'] = login_history
 
         return render(request, 'user_manage/user_detail.html', context)
     
