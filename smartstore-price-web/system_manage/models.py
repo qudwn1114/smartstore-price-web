@@ -22,6 +22,18 @@ def create_user_profile(sender, instance, created, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
 
+class LoginHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='login_history')
+    ip = models.CharField(max_length=50, null=True)
+    browser = models.CharField(max_length=100, null=True)
+    os = models.CharField(max_length=100, null=True)
+    device = models.CharField(max_length=100, null=True)
+    is_mobile = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='생성일')
+
+    class Meta:
+        db_table='login_history'
+
 class Token(models.Model):
     access_token = models.CharField(max_length=400)
     expires_at = models.DateTimeField()

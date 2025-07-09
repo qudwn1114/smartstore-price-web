@@ -16,8 +16,9 @@ from django.conf import settings
 
 from system_manage.decorators import permission_required
 from system_manage.naver_commerce import get_valid_token, get_product_by_channel_product_no, get_option_by_channel_product_no
-from system_manage.models import GoldPrice, GoldPriceHistory, CrawlTarget, Product, GroupOption
+from system_manage.models import GoldPrice, GoldPriceHistory, CrawlTarget, Product, LoginHistory
 
+from user_agents import parse
 from decimal import Decimal
 import datetime, json, requests, os, time, platform, logging, traceback
 
@@ -222,8 +223,23 @@ class LoginView(View):
         if not user.is_active:
             return JsonResponse({'message':'Deactivated account.'}, status = 400)
         
+        user_agent_str = request.META.get('HTTP_USER_AGENT', '')
+        user_agent = parse(user_agent_str)
+        ip = get_client_ip(request)
+        browser = user_agent.browser.family     # Chrome, Safari 등
+        os = user_agent.os.family               # Windows, iOS 등
+        device = user_agent.device.family       # iPhone, PC 등
+        is_mobile = user_agent.is_mobile        # True / False
         if user.is_superuser:
             login(request, user)
+            LoginHistory.objects.create(
+                user=user,
+                ip=ip,
+                browser=browser,
+                os=os,
+                device=device,
+                is_mobile=is_mobile
+            )
             if 'next' in request.GET:
                 url = request.GET.get('next')
                 url = url.split('?next=')[-1]
@@ -289,6 +305,13 @@ def validate_phone(phone):
 
     return True
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0].strip()
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 class GoldHistoryView(View):
     '''

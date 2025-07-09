@@ -6,3 +6,4 @@ pybase64==1.4.1
 bcrypt==4.3.0
 selenium==4.34.0
 beautifulsoup4==4.13.4
+user-agents==2.2.0
