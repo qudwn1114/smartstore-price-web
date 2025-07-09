@@ -1,7 +1,7 @@
 from django.urls import path
 
 from django.contrib.auth.views import LogoutView
-from system_manage.views.system_manage_views.auth_views import HomeView, LoginView, PermissionDeniedView, NotFoundView, update_gold_price, update_naver_gold_price
+from system_manage.views.system_manage_views.auth_views import HomeView, LoginView, PermissionDeniedView, NotFoundView, update_gold_price, update_naver_gold_price, GoldHistoryView
 from system_manage.views.system_manage_views.user_views import UserDetailView
 from system_manage.views.system_manage_views.product_views import create_product, edit_product, delete_product, bulk_update_product
 from system_manage.views.system_manage_views.option_views import get_option, edit_option, fetch_option
@@ -17,6 +17,7 @@ urlpatterns = [
 
     path('gold-price/', update_gold_price),
     path('gold-price/naver/', update_naver_gold_price),
+    path('gold-history/', GoldHistoryView.as_view(), name='gold_history'),
 
     path('product/create/', create_product),
     path('product/edit/', edit_product),

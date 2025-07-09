@@ -69,7 +69,22 @@
       <li class="menu-item {% if active_menu1 == 'dashboard' %}active{% endif %}">
         <a href="{% url 'system_manage:home' %}" class="menu-link">
           <i class="menu-icon tf-icons ri-home-smile-line"></i>
-          <div data-i18n="Dashboard">Dashboard</div>
+          <div data-i18n="Home">Home</div>
+        </a>
+      </li>
+      <li class="menu-header mt-5">
+        <span class="menu-header-text" data-i18n="회원 정보">회원 정보</span>
+      </li>
+      <li class="menu-item {% if active_menu1 == 'user' %}active{% endif %}">
+        <a href="{% url 'system_manage:user_detail' user.pk %}" class="menu-link">
+          <i class="menu-icon tf-icons ri-user-line"></i>          
+          <div data-i18n="프로필">프로필</div>
+        </a>
+      </li>
+      <li class="menu-item {% if active_menu1 == 'gold_history' %}active{% endif %}">
+        <a href="{% url 'system_manage:gold_history' %}" class="menu-link">
+          <i class="menu-icon tf-icons ri-history-line"></i>          
+          <div data-i18n="시세 변경 이력">시세 변경 이력</div>
         </a>
       </li>
     </ul>

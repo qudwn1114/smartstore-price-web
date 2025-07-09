@@ -4,7 +4,8 @@ from django.views.generic import View, TemplateView
 from django.http import HttpRequest, JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.db.models import Q, F, ExpressionWrapper, DecimalField
+from django.db.models import Q, F, ExpressionWrapper, DecimalField, IntegerField
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger, InvalidPage
 from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.core.validators import RegexValidator
@@ -287,3 +288,40 @@ def validate_phone(phone):
         return False
 
     return True
+
+
+class GoldHistoryView(View):
+    '''
+        금 시세 변경 이력
+    '''
+    @method_decorator(permission_required(redirect_url='system_manage:denied'))
+    def get(self, request: HttpRequest, *args, **kwargs):
+        context = {}
+        context['active_menu1'] = 'gold_history'
+
+        paginate_by = '20'
+        page = request.GET.get('page', '1')
+
+        obj_list = GoldPriceHistory.objects.annotate(
+            don_price=ExpressionWrapper(
+                F('price') * 3.75,
+                output_field=IntegerField()
+            )
+        ).order_by('-id').values(
+            'id', 'price', 'don_price', 'created_at')
+        
+        paginator = Paginator(obj_list, paginate_by)
+        try:
+            page_obj = paginator.page(page)
+        except (PageNotAnInteger, EmptyPage, InvalidPage):
+            page = 1
+            page_obj = paginator.page(page)
+
+        pagelist = paginator.get_elided_page_range(page, on_each_side=3, on_ends=1)
+        context['total_count'] = paginator.count
+        context['pagelist'] = pagelist
+        context['page_obj'] = page_obj
+        context['last_page_number'] = paginator.num_pages
+
+
+        return render(request, 'system_manage/gold_history.html', context)

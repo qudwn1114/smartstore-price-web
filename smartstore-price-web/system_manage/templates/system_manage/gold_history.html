@@ -1,0 +1,59 @@
+{% extends "layouts/system_base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block stylesheets %}
+{% endblock stylesheets %}
+
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <!-- Hoverable Table rows -->
+        <div class="card">
+          <h5 class="card-header">
+            금 시세 변경 이력
+            <div class="badge bg-label-primary rounded-pill">{{total_count|intcomma}}</div>
+          </h5>
+          <div class="table-responsive text-nowrap">
+            <table class="table table-sm table-hover">
+              <thead>
+                <tr>
+                  <th>3.75<span class="text-lowercase">g</span></th>
+                  <th>1<span class="text-lowercase">g</span></th>
+                  <th>날짜</th>
+                </tr>
+              </thead>
+              <tbody class="table-border-bottom-0">
+                {% if page_obj %}
+                  {% for i in page_obj %}
+                  <tr>
+                    <td>
+                      {{i.don_price|intcomma}}원
+                    </td>
+                    <td>
+                      {{i.price|intcomma}}원
+                    </td>
+                    <td><span class="badge rounded-pill bg-label-primary me-1">{{i.created_at}}</span></td>
+                  </tr>
+                  {% endfor %}
+                {% else %}
+                  <tr>
+                      <td class="text-center" colspan='4'>데이터가 없습니다.</td>
+                  </tr>
+                {% endif %}              
+              </tbody>
+            </table>
+            {% include 'admin_pagination.html' %}
+          </div>
+        </div>
+        <!--/ Hoverable Table rows -->
+        <hr class="my-12">
+    </div>
+</div>
+{% endblock %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="{% static 'js/script_pagination.js' %}"></script>
+{% endblock javascripts %}
