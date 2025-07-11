@@ -7,7 +7,7 @@ from system_manage.decorators import permission_required
 from system_manage.naver_commerce import get_valid_token, product_multi_update, option_stock
 from system_manage.models import GoldPrice, Product, GroupOption, ApplyTaskHistory
 
-import time
+import time, logging, traceback
 
 @require_http_methods(["POST"])
 @permission_required(raise_exception=True)
@@ -75,6 +75,7 @@ def apply_product(request):
 @require_http_methods(["POST"])
 @permission_required(raise_exception=True)
 def bulk_apply_product(request):
+    logger = logging.getLogger('my')
     apply_task_id = request.POST['apply_task_id']
     try:
         apply_task = ApplyTaskHistory.objects.get(pk=apply_task_id)
@@ -123,12 +124,17 @@ def bulk_apply_product(request):
 
     # (3) 옵션 업데이트 (네이버 API)
     for idx, opt in enumerate(options):
-        option_stock(
-            access_token=access_token,
-            origin_product_no=opt["origin_product_no"],
-            sale_price=opt["sale_price"],
-            option_combinations=opt["option_combinations"]
-        )
+        try:
+            option_stock(
+                access_token=access_token,
+                origin_product_no=opt["origin_product_no"],
+                sale_price=opt["sale_price"],
+                option_combinations=opt["option_combinations"]
+            )
+        except:
+            logger.error(traceback.format_exc())
+            return JsonResponse({'message': 'API 요청 에러", f"⚠️ 오류 내용: {e}'}, status=400)
+
         completed_steps += 1
         percent = int(completed_steps / total_steps * 70)
         apply_task.progress = 30 + percent
