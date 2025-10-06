@@ -49,7 +49,7 @@ def apply_product(request):
     try:
         product_multi_update(access_token=access_token, products=products)
     except Exception as e:
-        return JsonResponse({'message': 'API 요청 에러", f"⚠️ 오류 내용: {e}'}, status=400)
+        return JsonResponse({'message': f'API 요청 에러", ⚠️ 오류 내용: {e}'}, status=400)
     
     group_options = product.options.all()
     if product.option_group_flag and group_options.exists():
@@ -65,7 +65,7 @@ def apply_product(request):
         try:
             option_stock(access_token=access_token, origin_product_no=product.origin_product_no, sale_price=product.price, option_combinations=option_combinations)
         except Exception as e:
-            return JsonResponse({'message': 'API 요청 에러", f"⚠️ 오류 내용: {e}'}, status=400)
+            return JsonResponse({'message': f'API 요청 에러", ⚠️ 오류 내용: {e}'}, status=400)
         
         return JsonResponse({'message': '상품 & 옵션 가격이 업데이트 되었습니다.'}, status=200)
 
@@ -114,7 +114,11 @@ def bulk_apply_product(request):
     chunk_size = 100
     for i in range(0, len(products), chunk_size):
         product_chunk = products[i:i + chunk_size]
-        product_multi_update(access_token=access_token, products=product_chunk)
+        try:
+            product_multi_update(access_token=access_token, products=product_chunk)
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            return JsonResponse({'message': f'일반 상품 업데이트 에러", ⚠️ 오류 내용: {e}'}, status=400)
         completed_steps += len(product_chunk)
         percent = int(completed_steps / total_steps * 60) 
         apply_task.progress = 30 + percent
@@ -131,16 +135,16 @@ def bulk_apply_product(request):
                 sale_price=opt["sale_price"],
                 option_combinations=opt["option_combinations"]
             )
-        except:
+        except Exception as e:
             logger.error(traceback.format_exc())
-            return JsonResponse({'message': 'API 요청 에러", f"⚠️ 오류 내용: {e}'}, status=400)
+            return JsonResponse({'message': f'옵션 상품 업데이트 에러", ⚠️ 오류 내용: {e}'}, status=400)
 
         completed_steps += 1
         percent = int(completed_steps / total_steps * 70)
         apply_task.progress = 30 + percent
         apply_task.status_message = f"옵션 상품 업데이트 중 입니다. ({idx+1}/{len(options)})"
         apply_task.save()
-        time.sleep(0.5)
+        time.sleep(0.7)
 
     apply_task.status_message = '작업이 완료되었습니다.'
     apply_task.progress = 100
