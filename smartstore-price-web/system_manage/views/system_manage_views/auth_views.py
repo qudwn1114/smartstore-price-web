@@ -232,14 +232,15 @@ class LoginView(View):
         is_mobile = user_agent.is_mobile        # True / False
         if user.is_superuser:
             login(request, user)
-            LoginHistory.objects.create(
-                user=user,
-                ip=ip,
-                browser=browser,
-                os=os,
-                device=device,
-                is_mobile=is_mobile
-            )
+            if not ip in ['127.0.0.1', '::1']:
+                LoginHistory.objects.create(
+                    user=user,
+                    ip=ip,
+                    browser=browser,
+                    os=os,
+                    device=device,
+                    is_mobile=is_mobile
+                )
             if 'next' in request.GET:
                 url = request.GET.get('next')
                 url = url.split('?next=')[-1]
