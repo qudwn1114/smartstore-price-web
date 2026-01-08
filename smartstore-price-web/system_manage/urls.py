@@ -6,6 +6,7 @@ from system_manage.views.system_manage_views.user_views import UserDetailView
 from system_manage.views.system_manage_views.product_views import create_product, edit_product, delete_product, bulk_update_product
 from system_manage.views.system_manage_views.option_views import get_option, edit_option, fetch_option
 from system_manage.views.system_manage_views.apply_views import create_apply_task, polling_apply_task, apply_product, bulk_apply_product
+from system_manage.views.customer_manage_views.customer_manage_views import CustomerManageView, edit_customer, delete_customer
 
 app_name='system_manage'
 urlpatterns = [
@@ -34,4 +35,8 @@ urlpatterns = [
     path('product/<int:product_id>/option/fetch/', fetch_option),
 
     path('user-detail/<int:pk>/', UserDetailView.as_view(), name='user_detail'),
+
+    path('customer-manage/', CustomerManageView.as_view(), name='customer_manage'), 
+    path('customer/edit/', edit_customer, name='edit_customer'),
+    path('customer/delete/', delete_customer, name='delete_customer'),
 ]

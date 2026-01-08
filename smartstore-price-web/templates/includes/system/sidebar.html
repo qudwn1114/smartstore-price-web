@@ -73,7 +73,7 @@
         </a>
       </li>
       <li class="menu-header mt-5">
-        <span class="menu-header-text" data-i18n="회원 정보">회원 정보</span>
+        <span class="menu-header-text" data-i18n="관리 정보">관리 정보</span>
       </li>
       <li class="menu-item {% if active_menu1 == 'user' %}active{% endif %}">
         <a href="{% url 'system_manage:user_detail' user.pk %}" class="menu-link">
@@ -85,6 +85,12 @@
         <a href="{% url 'system_manage:gold_history' %}" class="menu-link">
           <i class="menu-icon tf-icons ri-history-line"></i>          
           <div data-i18n="시세 변경 이력">시세 변경 이력</div>
+        </a>
+      </li>
+      <li class="menu-item {% if active_menu1 == 'customer' %}active{% endif %}">
+        <a href="{% url 'system_manage:customer_manage' %}" class="menu-link">
+          <i class="menu-icon tf-icons ri-folder-user-line"></i>          
+          <div data-i18n="고객">고객</div>
         </a>
       </li>
     </ul>

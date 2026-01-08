@@ -116,3 +116,30 @@ class ApplyTaskHistory(models.Model):
 
     class Meta:
         db_table='apply_task_history'
+
+
+class Customer(models.Model):
+    name = models.CharField(max_length=50, verbose_name='회원명')
+    phone = models.CharField(max_length=20, verbose_name='전화번호', unique=True, null=True)
+    gender = models.CharField(null=True, max_length=10, verbose_name='성별', choices=(('MALE', '남성'), ('FEMALE', '여성')))
+    comment = models.TextField(null=True, verbose_name='비고')
+    birth = models.DateField(verbose_name='생년월일', default='2000-01-01')
+    delete_flag = models.BooleanField(default=False, verbose_name='삭제 여부')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='생성일')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='수정일')
+
+    class Meta:
+        db_table='customer'
+
+class Order(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name='orders')
+    order_name = models.CharField(max_length=100, verbose_name='주문명')
+    order_date = models.DateField(verbose_name='주문일')
+    total_price = models.PositiveIntegerField(verbose_name='총 가격')
+    status = models.CharField(max_length=10, verbose_name='주문 상태')
+    comment = models.TextField(null=True, verbose_name='비고')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='생성일')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='수정일')
+
+    class Meta:
+        db_table='order'

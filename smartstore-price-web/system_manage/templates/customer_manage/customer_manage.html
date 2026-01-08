@@ -1,0 +1,216 @@
+{% extends "layouts/system_base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'system/assets/vendor/libs/bootstrap-datepicker/bootstrap-datepicker.css' %}" />
+{% endblock stylesheets %}
+
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <!-- Hoverable Table rows -->
+        <div class="card">
+            <div class="card-header d-flex align-items-center justify-content-between">
+                <h5 class="card-title mb-0">고객 <div class="badge bg-label-primary rounded-pill">{{total_customer_count|intcomma}} 명</h5>
+                <div>
+                    <a href="#" class="btn btn-label-secondary btn-sm" href="javascript:;"data-bs-toggle="offcanvas" data-bs-target="#createUser"><span><i class="ri-add-line me-2"></i>고객 등록</span></a>
+                </div>
+            </div>
+            <div class="card-body">
+                <form id="search-form" method="get" action="">
+                    <div class="row">
+                        <div class="col-12">
+                        <div class="input-group input-group-merge input-group-sm">
+                            <span class="input-group-text" id="basic-addon-search31"><i class="ri-search-line"></i></span>
+                            <input type="text" class="form-control" id="search_keyword" name="search_keyword" placeholder="회원명 또는 전화번호를 입력해주세요..." aria-label="Search..." aria-describedby="basic-addon-search31" value="{{search_keyword}}"/>
+                        </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="table-responsive text-nowrap">
+                    <table class="table table-sm table-hover">
+                        <thead>
+                        <tr>
+                            <th>이름  <a href="?search_keyword={{search_keyword}}&sort=name&order={% if order == 'asc' and sort == 'name' %}desc{% else %}asc{% endif %}">{% if sort == 'name' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
+                            <th>전화번호 <a href="?search_keyword={{search_keyword}}&sort=phone&order={% if order == 'asc' and sort == 'phone' %}desc{% else %}asc{% endif %}">{% if sort == 'phone' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
+                            <!-- <th>누적주문수 <a href="?search_keyword={{search_keyword}}&sort=gold&order={% if order == 'asc' and sort == 'gold' %}desc{% else %}asc{% endif %}">{% if sort == 'gold' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th> -->
+                            <th>등록일 <a href="?search_keyword={{search_keyword}}&sort=created_at&order={% if order == 'asc' and sort == 'created_at' %}desc{% else %}asc{% endif %}">{% if sort == 'created_at' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody class="table-border-bottom-0">
+                        {% if customers %}
+                            {% for i in customers %}
+                            <tr>  
+                            <td>
+                                <div class="d-flex justify-content-start align-items-center">
+                                    <div class="avatar-wrapper">
+                                    <div class="avatar avatar-sm me-3">
+                                        <a href="javascript:;" class="btn-edit-user" data-bs-toggle="offcanvas" data-bs-target="#editUser" data-id="{{ i.id }}" data-name="{{ i.name }}" data-phone="{{ i.phone }}" data-birth="{{ i.birth|date:'Y-m-d' }}" data-gender="{{ i.gender|default_if_none:'' }}" data-comment="{{ i.comment|default:'' }}">
+                                            <img src="{% static 'system/assets/img/avatars/' %}{{ i.avatar_number }}.png" alt="Avatar" class="rounded-circle">
+                                        </a>
+                                    </div>
+                                    </div>
+                                    <div class="d-flex flex-column">
+                                    <a href="javascript:;" class="text-heading text-truncate btn-edit-user" data-bs-toggle="offcanvas" data-bs-target="#editUser" data-id="{{ i.id }}" data-name="{{ i.name }}" data-phone="{{ i.phone }}" data-birth="{{ i.birth|date:'Y-m-d' }}" data-gender="{{ i.gender|default_if_none:'' }}" data-comment="{{ i.comment|default:'' }}">
+                                        <span class="fw-medium">{{i.name}}</span>
+                                    </a>
+                                    <small class="text-truncate">고객님</small>
+                                    </div>
+                                </div>
+
+                            </td>
+                            <td><span class="text-heading">{{i.phone}}</span></td>
+                            <!-- <td></td> -->
+                            <td>
+                                <span class="badge rounded-pill bg-label-primary me-1">{{i.created_at|date:"Y.m.d"}}</span>
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line"></i></button>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item btn-edit-user" href="javascript:;" data-bs-toggle="offcanvas" data-bs-target="#editUser" data-id="{{ i.id }}" data-name="{{ i.name }}" data-phone="{{ i.phone }}" data-birth="{{ i.birth|date:'Y-m-d' }}" data-gender="{{ i.gender|default_if_none:'' }}" data-comment="{{ i.comment|default:'' }}"><i class="ri-pencil-line me-1"></i> 수정</a>
+                                    <a class="dropdown-item btn-delete" href="javascript:;" data-customer-id="{{i.id}}" data-name="{{i.name}}"><i class="ri-delete-bin-line me-1"></i> 삭제</a>
+                                </div>
+                                </div>
+                            </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td class="text-center" colspan='5'>데이터가 없습니다.</td>
+                            </tr>
+                        {% endif %}              
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--/ Hoverable Table rows -->
+        <div class="offcanvas offcanvas-end" id="createUser" aria-hidden="true">
+            <div class="offcanvas-header border-bottom">
+              <h5 class="offcanvas-title">고객 정보 등록</h5>
+              <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body mx-0 flex-grow-0 h-100">
+              <form id="createUserForm">
+                <h6>필수입력</h6>
+                <div class="form-floating form-floating-outline mb-3">
+                  <input type="text" class="form-control" id="name" placeholder="이름" name="name" aria-label="이름" />
+                  <label for="name">이름</label>
+                </div>
+                <div class="form-floating form-floating-outline mb-3">
+                  <input type="text" id="phone" name="phone" class="form-control" placeholder="010********" aria-label="전화번호"/>
+                  <label for="phone">전화번호</label>
+                </div>
+                <hr>
+                <h6>선택입력</h6>
+                <div class="form-floating form-floating-outline mb-3">
+                  <input type="text" class="form-control" placeholder="YYYY-MM-DD" id="birth" name="birth" value="1990-01-01"/>
+                  <label for="birth">생년월일</label>
+                </div>
+                <div class="form-floating form-floating-outline mb-3">
+                  <select
+                    id="gender"
+                    name="gender"
+                    class="form-select"
+                    aria-label="성별">
+                    <option value="" selected>None</option>
+                    <option value="MALE">남자</option>
+                    <option value="FEMALE">여자</option>
+                  </select>
+                  <label for="gender">성별</label>
+                </div>
+                <div class="form-floating form-floating-outline mb-3">
+                    <textarea class="form-control h-px-75" name="comment" id="comment" placeholder="설명"></textarea>
+                    <label for="comment">설명</label>
+                </div>
+                <div class="mb-4 d-flex flex-wrap">
+                  <button type="button" class="btn btn-primary me-4" id="btnSubmit">등록</button>
+                  <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">
+                    닫기
+                  </button>
+                </div>
+              </form>
+            </div>
+        </div>
+
+        <div class="offcanvas offcanvas-end" id="editUser" aria-hidden="true">
+            <div class="offcanvas-header border-bottom">
+              <h5 class="offcanvas-title">고객 정보 수정</h5>
+              <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body mx-0 flex-grow-0 h-100">
+              <form id="editUserForm">
+                <h6>필수입력</h6>
+                <input type="hidden" id="editCustomerId" name="customer_id" />
+                <div class="form-floating form-floating-outline mb-3">
+                  <input type="text" class="form-control" id="editName" placeholder="이름" name="name" aria-label="이름" />
+                  <label for="editName">이름</label>
+                </div>
+                <div class="form-floating form-floating-outline mb-3">
+                  <input type="text" id="editPhone" name="phone" class="form-control" placeholder="010********" aria-label="전화번호"/>
+                  <label for="editPhone">전화번호</label>
+                </div>
+                <hr>
+                <h6>선택입력</h6>
+                <div class="form-floating form-floating-outline mb-3">
+                  <input type="text" class="form-control" placeholder="YYYY-MM-DD" id="editBirth" name="birth" value="1990-01-01"/>
+                  <label for="editBirth">생년월일</label>
+                </div>
+                <div class="form-floating form-floating-outline mb-3">
+                  <select
+                    id="editGender"
+                    name="gender"
+                    class="form-select"
+                    aria-label="성별">
+                    <option value="" selected>None</option>
+                    <option value="MALE">남자</option>
+                    <option value="FEMALE">여자</option>
+                  </select>
+                  <label for="editGender">성별</label>
+                </div>
+                <div class="form-floating form-floating-outline mb-3">
+                    <textarea class="form-control h-px-75" name="comment" id="editComment" placeholder="설명"></textarea>
+                    <label for="editComment">설명</label>
+                </div>
+                <div class="mb-4 d-flex justify-content-sm-between justify-content-start my-6 gap-2">
+                    <div class="d-flex">
+                        <button type="button" id="btnEdit" class="btn btn-primary me-4 waves-effect waves-light btn-update-event">수정</button>
+                        <button type="reset" class="btn btn-outline-secondary btn-cancel me-sm-0 me-1 waves-effect" data-bs-dismiss="offcanvas">닫기</button>
+                    </div>
+                    <button class="btn btn-outline-danger btn-delete-event waves-effect" type="button" id="btnDelete">삭제</button>
+                </div>
+              </form>
+            </div>
+        </div>
+        <hr class="my-12">
+    </div>
+</div>
+{% endblock %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script src="{% static 'system/assets/vendor/libs/bootstrap-datepicker/bootstrap-datepicker.js' %}"></script>
+<script src="{% static 'system/assets/vendor/libs/bootstrap-datepicker/locales/bootstrap-datepicker.ko.min.js' %}"></script>
+<script>
+    $("#birth").datepicker({ 
+      format: "yyyy-mm-dd",
+      language: "ko",  // 한글 설정
+      autoclose: true, // 날짜 선택 후 자동 닫힘
+      endDate: "today", // 오늘 이후 날짜 선택 불가
+      todayHighlight: true // 오늘 날짜 강조 표시
+    });
+    $("#editBirth").datepicker({ 
+      format: "yyyy-mm-dd",
+      language: "ko",  // 한글 설정
+      autoclose: true, // 날짜 선택 후 자동 닫힘
+      endDate: "today", // 오늘 이후 날짜 선택 불가
+      todayHighlight: true // 오늘 날짜 강조 표시
+    });
+</script>
+<script src="{% static 'js/script_pagination.js' %}"></script>
+<script src="{% static 'system/js/customer_manage/script_customer_manage.js' %}?v=1"></script>
+{% endblock javascripts %}
