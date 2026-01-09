@@ -35,14 +35,14 @@
                         <tr>
                             <th>이름  <a href="?search_keyword={{search_keyword}}&sort=name&order={% if order == 'asc' and sort == 'name' %}desc{% else %}asc{% endif %}">{% if sort == 'name' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
                             <th>전화번호 <a href="?search_keyword={{search_keyword}}&sort=phone&order={% if order == 'asc' and sort == 'phone' %}desc{% else %}asc{% endif %}">{% if sort == 'phone' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
-                            <!-- <th>누적주문수 <a href="?search_keyword={{search_keyword}}&sort=gold&order={% if order == 'asc' and sort == 'gold' %}desc{% else %}asc{% endif %}">{% if sort == 'gold' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th> -->
+                            <th>누적주문수 <a href="?search_keyword={{search_keyword}}&sort=order_count&order={% if order == 'asc' and sort == 'order_count' %}desc{% else %}asc{% endif %}">{% if sort == 'order_count' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
                             <th>등록일 <a href="?search_keyword={{search_keyword}}&sort=created_at&order={% if order == 'asc' and sort == 'created_at' %}desc{% else %}asc{% endif %}">{% if sort == 'created_at' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
                             <th></th>
                         </tr>
                         </thead>
                         <tbody class="table-border-bottom-0">
-                        {% if customers %}
-                            {% for i in customers %}
+                        {% if page_obj %}
+                            {% for i in page_obj %}
                             <tr>  
                             <td>
                                 <div class="d-flex justify-content-start align-items-center">
@@ -62,8 +62,8 @@
                                 </div>
 
                             </td>
-                            <td><span class="text-heading">{{i.phone}}</span></td>
-                            <!-- <td></td> -->
+                            <td><a class="text-heading btn-edit-user" href="javascript:;" data-bs-toggle="offcanvas" data-bs-target="#editUser" data-id="{{ i.id }}" data-name="{{ i.name }}" data-phone="{{ i.phone }}" data-birth="{{ i.birth|date:'Y-m-d' }}" data-gender="{{ i.gender|default_if_none:'' }}" data-comment="{{ i.comment|default:'' }}">{{i.phone}}</a></td>
+                            <td><a href="#">{{i.order_count|intcomma}}</a></td>
                             <td>
                                 <span class="badge rounded-pill bg-label-primary me-1">{{i.created_at|date:"Y.m.d"}}</span>
                             </td>
@@ -85,6 +85,7 @@
                         {% endif %}              
                         </tbody>
                     </table>
+                    {% include 'admin_pagination.html' %}
                 </div>
             </div>
         </div>

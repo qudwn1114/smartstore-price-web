@@ -4,7 +4,7 @@ from django.views.generic import View
 from django.http import HttpRequest, JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.db.models import Q, F, ExpressionWrapper, DecimalField, IntegerField, Case, When, Value
+from django.db.models import Q, F, ExpressionWrapper, DecimalField, IntegerField, Case, When, Value, Count
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger, InvalidPage
 from django.urls import reverse
 from django.utils.decorators import method_decorator
@@ -28,6 +28,9 @@ class CustomerManageView(View):
         context['active_menu1'] = 'customer'
         search_keyword = request.GET.get('search_keyword', '').strip()
         context['search_keyword'] = search_keyword
+
+        paginate_by = '20'
+        page = request.GET.get('page', '1')
 
         order = request.GET.get('order', 'desc')
         sort = request.GET.get('sort', 'created_at')
@@ -54,9 +57,21 @@ class CustomerManageView(View):
                 default=Value(3),
                 output_field=IntegerField()
             ),
+            order_count=Count('orders'),
         ).order_by(*ordering)
-        context['customers'] = queryset
-        context['total_customer_count'] = queryset.count()
+
+        paginator = Paginator(queryset, paginate_by)
+        try:
+            page_obj = paginator.page(page)
+        except (PageNotAnInteger, EmptyPage, InvalidPage):
+            page = 1
+            page_obj = paginator.page(page)
+
+        pagelist = paginator.get_elided_page_range(page, on_each_side=3, on_ends=1)
+        context['total_customer_count'] = paginator.count
+        context['pagelist'] = pagelist
+        context['page_obj'] = page_obj
+        context['last_page_number'] = paginator.num_pages        
 
         return render(request, 'customer_manage/customer_manage.html', context)
     
