@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.views.generic import View
 from django.http import HttpRequest, JsonResponse
@@ -189,3 +189,61 @@ def order_status(request):
         return JsonResponse({'message': 'Error occurred while updating order.'}, status=400)
 
     return JsonResponse({'message': '업데이트 되었습니다.'}, status=200)
+
+
+
+class CustomerOrderManageView(View):
+    '''
+        주문 관리 화면
+    '''
+    @method_decorator(permission_required(redirect_url='system_manage:denied'))
+    def get(self, request: HttpRequest, *args, **kwargs):
+        context = {}
+        customer_id = kwargs.get('customer_id')
+        customer = get_object_or_404(Customer, pk=customer_id)
+        context['customer'] = customer
+        
+        context['active_menu1'] = 'order'
+        search_keyword = request.GET.get('search_keyword', '').strip()
+        context['search_keyword'] = search_keyword
+
+        paginate_by = '20'
+        page = request.GET.get('page', '1')
+
+        order = request.GET.get('order', 'desc')
+        sort = request.GET.get('sort', 'created_at')
+        context['order'] = order
+        context['sort'] = sort
+
+        if order == 'desc':
+            ordering = [f'-{sort}', '-id']
+        else:
+            ordering = [f'{sort}', 'id']
+
+        context['customers'] = Customer.objects.filter(delete_flag=False).values('id', 'name', 'phone')
+
+        query = Q(customer=customer)
+
+        queryset = Order.objects.filter(query).annotate(
+            avatar_number=Case(
+                When(customer__gender='MALE', then=Value(1)),
+                When(customer__gender='FEMALE', then=Value(2)),
+                default=Value(3),
+                output_field=IntegerField()
+            ),
+        ).order_by(*ordering)
+
+        paginator = Paginator(queryset, paginate_by)
+        try:
+            page_obj = paginator.page(page)
+        except (PageNotAnInteger, EmptyPage, InvalidPage):
+            page = 1
+            page_obj = paginator.page(page)
+
+        pagelist = paginator.get_elided_page_range(page, on_each_side=3, on_ends=1)
+        context['total_count'] = paginator.count
+        context['pagelist'] = pagelist
+        context['page_obj'] = page_obj
+        context['last_page_number'] = paginator.num_pages        
+
+        return render(request, 'customer_manage/customer_order_manage.html', context)

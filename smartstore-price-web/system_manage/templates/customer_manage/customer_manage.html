@@ -63,7 +63,12 @@
 
                             </td>
                             <td><a class="text-heading btn-edit-user" href="javascript:;" data-bs-toggle="offcanvas" data-bs-target="#editUser" data-id="{{ i.id }}" data-name="{{ i.name }}" data-phone="{{ i.phone }}" data-birth="{{ i.birth|date:'Y-m-d' }}" data-gender="{{ i.gender|default_if_none:'' }}" data-comment="{{ i.comment|default:'' }}">{{i.phone}}</a></td>
-                            <td><a href="#">{{i.order_count|intcomma}}</a></td>
+                            <td>
+                              {% if i.order_count > 0 %}
+                              <a href="{% url 'system_manage:customer_order_manage' i.pk %}">{{i.order_count|intcomma}}</a></td>
+                              {% else %}
+                              <span>0</span>
+                              {% endif %}
                             <td>
                                 <span class="badge rounded-pill bg-label-primary me-1">{{i.created_at|date:"Y.m.d"}}</span>
                             </td>

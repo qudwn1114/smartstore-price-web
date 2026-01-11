@@ -13,29 +13,16 @@
         <!-- Hoverable Table rows -->
         <div class="card">
             <div class="card-header d-flex align-items-center justify-content-between">
-                <h5 class="card-title mb-0">주문 정보 <div class="badge bg-label-primary rounded-pill">{{total_count|intcomma}} 건</h5>
-                <div>
-                    <a href="#" class="btn btn-label-secondary btn-sm" href="javascript:;"data-bs-toggle="offcanvas" data-bs-target="#createOrder"><span><i class="ri-add-line me-2"></i>주문 등록</span></a>
-                </div>
+                <h5 class="card-title mb-0">{{customer.name}} 고객님의 주문 정보 <div class="badge bg-label-primary rounded-pill">{{total_count|intcomma}} 건</h5>
             </div>
             <div class="card-body">
-                <form id="search-form" method="get" action="">
-                    <div class="row">
-                        <div class="col-12">
-                        <div class="input-group input-group-merge input-group-sm">
-                            <span class="input-group-text" id="basic-addon-search31"><i class="ri-search-line"></i></span>
-                            <input type="text" class="form-control" id="search_keyword" name="search_keyword" placeholder="회원명 또는 전화번호를 입력해주세요..." aria-label="Search..." aria-describedby="basic-addon-search31" value="{{search_keyword}}"/>
-                        </div>
-                        </div>
-                    </div>
-                </form>
                 <div class="table-responsive text-nowrap">
                     <table class="table table-sm table-hover">
                         <thead>
                         <tr>
                             <th>주문명  <a href="?search_keyword={{search_keyword}}&sort=order_name&order={% if order == 'asc' and sort == 'order_name' %}desc{% else %}asc{% endif %}">{% if sort == 'order_name' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
                             <th>주문일 <a href="?search_keyword={{search_keyword}}&sort=order_date&order={% if order == 'asc' and sort == 'order_date' %}desc{% else %}asc{% endif %}">{% if sort == 'order_date' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
-                            <th>회원 <a href="?search_keyword={{search_keyword}}&sort=customer__name&order={% if order == 'asc' and sort == 'customer__name' %}desc{% else %}asc{% endif %}">{% if sort == 'customer__name' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
+                            <th>회원</th>
                             <th>금액 <a href="?search_keyword={{search_keyword}}&sort=total_price&order={% if order == 'asc' and sort == 'total_price' %}desc{% else %}asc{% endif %}">{% if sort == 'total_price' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>                            
                             <th>상태 <a href="?search_keyword={{search_keyword}}&sort=status&order={% if order == 'asc' and sort == 'status' %}desc{% else %}asc{% endif %}">{% if sort == 'status' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
                             <th></th>
@@ -111,60 +98,6 @@
             </div>
         </div>
         <!--/ Hoverable Table rows -->
-        <div class="offcanvas offcanvas-end" id="createOrder" aria-hidden="true">
-            <div class="offcanvas-header border-bottom">
-              <h5 class="offcanvas-title">주문 정보 등록</h5>
-              <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body mx-0 flex-grow-0 h-100">
-              <form id="createOrderForm">
-                <h6>필수입력</h6>
-                <div class="form-floating form-floating-outline mb-3">
-                  <input type="text" class="form-control" placeholder="YYYY-MM-DD" id="orderDate" name="order_date" value="{% now 'Y-m-d' %}"/>
-                  <label for="orderDate">주문일자</label>
-                </div>
-                <div class="form-floating form-floating-outline mb-3">
-                  <input type="text" class="form-control" id="orderName" placeholder="주문명" name="order_name" aria-label="주문명" />
-                  <label for="orderName">주문명</label>
-                </div>
-                <div class="form-floating form-floating-outline mb-3">
-                    <input type="text" id="totalPrice" name="total_price" class="form-control number-only" placeholder="금액"/>
-                    <label for="totalPrice">금액</label>
-                </div>
-                <div class="form-floating form-floating-outline mb-3">
-                    <select class="select2 select-event-label form-select" id="orderStatus" name="status">
-                        <option data-label="primary" value="0" selected>주문</option>
-                        <option data-label="warning" value="1">제작완료</option>
-                        <option data-label="success" value="2">전달완료</option>
-                        <option data-label="danger" value="3">취소</option>
-                    </select>
-                    <label for="orderStatus">상태</label>
-                </div>
-                <hr>
-                <h6>선택입력</h6>
-                <div class="form-floating form-floating-outline form-floating-bootstrap-select mb-3">
-                    <select id="customers" name="customer_id" class="selectpicker w-100" data-style="btn-default" data-live-search="true" data-show-subtext="true" title="고객명 또는 전화번호로 검색해주세요.">
-                        <option value="" selected>미등록</option>
-                        {% for i in customers %}
-                            <option data-tokens="{{i.phone}}" data-subtext="{{i.phone}}" value={{i.id}}>{{i.name}}</option>
-                        {% endfor %}
-                    </select>
-                    <label for="customers">고객</label>
-                </div>
-                <div class="form-floating form-floating-outline mb-3">
-                    <textarea class="form-control h-px-75" name="comment" id="comment" placeholder="주문 비고"></textarea>
-                    <label for="comment">주문 비고</label>
-                </div>
-                <div class="mb-4 d-flex flex-wrap">
-                  <button type="button" class="btn btn-primary me-4" id="btnSubmit">등록</button>
-                  <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">
-                    닫기
-                  </button>
-                </div>
-              </form>
-            </div>
-        </div>
-
         <div class="offcanvas offcanvas-end" id="editOrder" aria-hidden="true">
             <div class="offcanvas-header border-bottom">
               <h5 class="offcanvas-title">주문 정보 수정</h5>
@@ -230,13 +163,6 @@
 <script src="{% static 'system/assets/vendor/libs/bootstrap-datepicker/bootstrap-datepicker.js' %}"></script>
 <script src="{% static 'system/assets/vendor/libs/bootstrap-datepicker/locales/bootstrap-datepicker.ko.min.js' %}"></script>
 <script>
-    $("#orderDate").datepicker({ 
-      format: "yyyy-mm-dd",
-      language: "ko",  // 한글 설정
-      autoclose: true, // 날짜 선택 후 자동 닫힘
-      endDate: "today", // 오늘 이후 날짜 선택 불가
-      todayHighlight: true // 오늘 날짜 강조 표시
-    });
     $("#editOrderDate").datepicker({ 
       format: "yyyy-mm-dd",
       language: "ko",  // 한글 설정
@@ -246,5 +172,5 @@
     });
 </script>
 <script src="{% static 'js/script_pagination.js' %}"></script>
-<script src="{% static 'system/js/customer_manage/script_order_manage.js' %}?v=1"></script>
+<script src="{% static 'system/js/customer_manage/script_customer_order_manage.js' %}?v=1"></script>
 {% endblock javascripts %}
