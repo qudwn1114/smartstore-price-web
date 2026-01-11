@@ -38,7 +38,7 @@ class CustomerManageView(View):
         context['sort'] = sort
 
         if order == 'desc':
-            ordering = [f'-{sort}', 'id']
+            ordering = [f'-{sort}', '-id']
         else:
             ordering = [f'{sort}', 'id']
 
@@ -47,7 +47,7 @@ class CustomerManageView(View):
             search_q = Q(name__icontains=search_keyword)
 
             if search_keyword.isdigit():
-                search_q |= Q(phone=int(search_keyword))
+                search_q |= Q(phone=search_keyword)
             query &= search_q
 
         queryset = Customer.objects.filter(query).annotate(
@@ -144,7 +144,7 @@ def edit_customer(request):
     except:
         return JsonResponse({'message': 'Error occurred while updating customer.'}, status=400)
 
-    return JsonResponse({'message': '삭제 되었습니다.'}, status=200)
+    return JsonResponse({'message': '수정 되었습니다.'}, status=200)
 
 @require_http_methods(["POST"])    
 @permission_required(raise_exception=True)

@@ -93,5 +93,11 @@
           <div data-i18n="고객">고객</div>
         </a>
       </li>
+      <li class="menu-item {% if active_menu1 == 'order' %}active{% endif %}">
+        <a href="{% url 'system_manage:order_manage' %}" class="menu-link">
+          <i class="menu-icon tf-icons ri-bill-line"></i>          
+          <div data-i18n="주문">주문</div>
+        </a>
+      </li>
     </ul>
 </aside>

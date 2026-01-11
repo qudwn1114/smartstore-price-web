@@ -7,6 +7,7 @@ from system_manage.views.system_manage_views.product_views import create_product
 from system_manage.views.system_manage_views.option_views import get_option, edit_option, fetch_option
 from system_manage.views.system_manage_views.apply_views import create_apply_task, polling_apply_task, apply_product, bulk_apply_product
 from system_manage.views.customer_manage_views.customer_manage_views import CustomerManageView, edit_customer, delete_customer
+from system_manage.views.customer_manage_views.order_manage_views import OrderManageView, edit_order, delete_order, order_status
 
 app_name='system_manage'
 urlpatterns = [
@@ -39,4 +40,9 @@ urlpatterns = [
     path('customer-manage/', CustomerManageView.as_view(), name='customer_manage'), 
     path('customer/edit/', edit_customer, name='edit_customer'),
     path('customer/delete/', delete_customer, name='delete_customer'),
+
+    path('order-manage/', OrderManageView.as_view(), name='order_manage'),
+    path('order/edit/', edit_order),
+    path('order/delete/', delete_order),
+    path('order/status/', order_status)
 ]

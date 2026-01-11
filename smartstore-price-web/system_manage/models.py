@@ -132,11 +132,17 @@ class Customer(models.Model):
         db_table='customer'
 
 class Order(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.PROTECT, related_name='orders')
+    STATUS_CHOICES = [
+        ('0', '주문요청'),
+        ('1', '제작완료'),
+        ('2', '수령완료'),
+        ('3', '취소')
+    ]
+    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, related_name='orders', null=True)
     order_name = models.CharField(max_length=100, verbose_name='주문명')
     order_date = models.DateField(verbose_name='주문일')
     total_price = models.PositiveIntegerField(verbose_name='총 가격')
-    status = models.CharField(max_length=10, verbose_name='주문 상태')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, verbose_name='주문상태', default='0')
     comment = models.TextField(null=True, verbose_name='비고')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='생성일')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='수정일')
