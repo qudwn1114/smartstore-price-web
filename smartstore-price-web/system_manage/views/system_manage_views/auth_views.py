@@ -297,10 +297,13 @@ def validate_birth(birth):
 
 def validate_phone(phone):
     '''
-        전화번호 유효성 체크
+        휴대폰 + 일반전화 유효성 체크
     '''
+    if not phone:
+        return False
+    regex = r'^(01[016789]\d{7,8}|0[2-9]\d{7,8})$'
     try:
-        RegexValidator(regex=r'^01([0-9]{1})([0-9]{4})([0-9]{4})$')(phone)
+        RegexValidator(regex=regex)(phone)
     except:
         return False
 
