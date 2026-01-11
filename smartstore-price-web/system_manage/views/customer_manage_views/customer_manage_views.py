@@ -94,10 +94,14 @@ class CustomerManageView(View):
                 return JsonResponse({'message': '성별 형식 오류'}, status=400)    
         else:
             gender = None
-        birth = request.POST['birth']
+        birth = request.get('birth')
+        if birth:
+            if not validate_birth(birth):
+                return JsonResponse({'message': '생년월일 형식 오류'}, status=400)
+        else:
+            birth = None
         comment = request.POST.get('comment', '').strip()   
-        if not validate_birth(birth):
-            return JsonResponse({'message': '생년월일 형식 오류'}, status=400)
+        
         try:
             Customer.objects.create(
                 name=name,
@@ -133,7 +137,12 @@ def edit_customer(request):
             return JsonResponse({'message': '성별 형식 오류'}, status=400)    
     else:
         gender = None
-    birth = request.POST['birth']
+    birth = request.POST.get('birth')
+    if birth:
+        if not validate_birth(birth):
+            return JsonResponse({'message': '생년월일 형식 오류'}, status=400)
+    else:
+        birth = None   
     comment = request.POST.get('comment', '').strip()
     try:
         with transaction.atomic():

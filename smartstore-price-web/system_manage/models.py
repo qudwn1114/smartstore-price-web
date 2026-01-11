@@ -124,7 +124,7 @@ class Customer(models.Model):
     phone = models.CharField(max_length=20, verbose_name='전화번호', unique=True, null=True)
     gender = models.CharField(null=True, max_length=10, verbose_name='성별', choices=(('MALE', '남성'), ('FEMALE', '여성')))
     comment = models.TextField(null=True, verbose_name='비고')
-    birth = models.DateField(verbose_name='생년월일', default='2000-01-01')
+    birth = models.DateField(verbose_name='생년월일', null=True)
     delete_flag = models.BooleanField(default=False, verbose_name='삭제 여부')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='생성일')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='수정일')
