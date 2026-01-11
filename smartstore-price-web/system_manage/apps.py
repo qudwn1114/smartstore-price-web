@@ -4,3 +4,6 @@ from django.apps import AppConfig
 class SystemManageConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'system_manage'
+
+    def ready(self):
+        import system_manage.signals

@@ -17,6 +17,8 @@ from django.conf import settings
 from system_manage.decorators import permission_required
 from system_manage.views.system_manage_views.auth_views import validate_birth, validate_phone
 from system_manage.models import Customer, Order
+from system_manage.services.customer_cache import get_cached_customers
+
 
 class OrderManageView(View):
     '''
@@ -37,7 +39,7 @@ class OrderManageView(View):
         context['order'] = order
         context['sort'] = sort
 
-        context['customers'] = Customer.objects.filter(delete_flag=False).values('id', 'name', 'phone')
+        context['customers'] = get_cached_customers()
 
         if order == 'desc':
             ordering = [f'-{sort}', '-id']
@@ -220,7 +222,8 @@ class CustomerOrderManageView(View):
         else:
             ordering = [f'{sort}', 'id']
 
-        context['customers'] = Customer.objects.filter(delete_flag=False).values('id', 'name', 'phone')
+        context['customers'] = get_cached_customers()
+
 
         query = Q(customer=customer)
 

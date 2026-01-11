@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     
     #app
-    'system_manage',
+    'system_manage.apps.SystemManageConfig',
 ]
 
 MIDDLEWARE = [

@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
+from django.core.cache import cache
 from django.views.generic import View
 from django.http import HttpRequest, JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -17,6 +18,7 @@ from django.conf import settings
 from system_manage.decorators import permission_required
 from system_manage.views.system_manage_views.auth_views import validate_birth, validate_phone
 from system_manage.models import Customer
+
 
 class CustomerManageView(View):
     '''

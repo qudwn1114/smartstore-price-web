@@ -301,7 +301,7 @@ def validate_phone(phone):
     '''
     if not phone:
         return False
-    regex = r'^(01[016789]\d{7,8}|0[2-9]\d{7,8})$'
+    regex = r'^(01[016789]\d{7,8}|02\d{7,8}|0[3-9]\d{8,9}|070\d{8})$'
     try:
         RegexValidator(regex=regex)(phone)
     except:
