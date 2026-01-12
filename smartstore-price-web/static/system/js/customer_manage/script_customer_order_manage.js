@@ -10,6 +10,14 @@ const editComment = document.getElementById('editComment');
 const btnEdit = document.getElementById('btnEdit');
 const btnDelete = document.getElementById('btnDelete');
 
+$('#customers').selectpicker({
+  container: '#createOrder .offcanvas-body'
+});
+
+$('#editCustomers').selectpicker({
+  container: '#editOrder .offcanvas-body'
+});
+
 function renderBadges(option) {
     if (!option.id) {
         return option.text;
