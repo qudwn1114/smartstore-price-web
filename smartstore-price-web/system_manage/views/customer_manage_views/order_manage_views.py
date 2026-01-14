@@ -88,28 +88,35 @@ class OrderManageView(View):
             return JsonResponse({'message': '주문날짜 형식 오류'}, status=400)
         total_price = int(request.POST['total_price'])
         status = request.POST['status']
-        customer_id = request.POST.get('customer_id')
         if status not in ['0', '1', '2', '3']:
             return JsonResponse({'message': '상태 형식 오류'}, status=400)
-        if customer_id:
-            try:
-                customer = Customer.objects.get(id=int(customer_id))
-            except Customer.DoesNotExist:
-                return JsonResponse({'message': '찾을 수 없는 고객입니다.'}, status=400)
-        else:
-            customer = None
-
+        
+        customer_name = request.POST['customer_name'].strip()
+        customer_phone = request.POST['customer_phone'].strip()
         comment = request.POST.get('comment', '').strip()   
         
         try:
-            Order.objects.create(
-                order_name = order_name,
-                order_date = order_date,
-                total_price = total_price,
-                status = status,
-                customer = customer,
-                comment = comment
-            )
+            with transaction.atomic():
+                if customer_phone:
+                    if not validate_phone(customer_phone):
+                        return JsonResponse({'message': '전화번호 형식 오류'}, status=400)
+                    customer, created = Customer.objects.get_or_create(phone=customer_phone)
+                    if created:
+                        customer.name = customer_name if customer_name else '이름없음'
+                    elif customer_name and customer.name != customer_name:
+                        customer.name = customer_name
+                    customer.save()
+                else:
+                    customer = None
+
+                Order.objects.create(
+                    order_name = order_name,
+                    order_date = order_date,
+                    total_price = total_price,
+                    status = status,
+                    customer = customer,
+                    comment = comment
+                )
         except:
             return JsonResponse({'message': '등록 오류'}, status=400)
         return JsonResponse({'message' : '등록 되었습니다.', 'url': reverse('system_manage:order_manage')},  status = 201)
@@ -130,20 +137,27 @@ def edit_order(request):
         return JsonResponse({'message': '주문날짜 형식 오류'}, status=400)
     total_price = int(request.POST['total_price'])
     status = request.POST['status']
-    customer_id = request.POST.get('customer_id')
+    
     if status not in ['0', '1', '2', '3']:
         return JsonResponse({'message': '상태 형식 오류'}, status=400)
-    if customer_id:
-        try:
-            customer = Customer.objects.get(id=int(customer_id))
-        except Customer.DoesNotExist:
-            return JsonResponse({'message': '찾을 수 없는 고객입니다.'}, status=400)
-    else:
-        customer = None
-
+    
+    customer_name = request.POST['customer_name'].strip()
+    customer_phone = request.POST['customer_phone'].strip()
     comment = request.POST.get('comment', '').strip()   
     try:
         with transaction.atomic():
+            if customer_phone:
+                if not validate_phone(customer_phone):
+                    return JsonResponse({'message': '전화번호 형식 오류'}, status=400)
+                customer, created = Customer.objects.get_or_create(phone=customer_phone)
+                if created:
+                    customer.name = customer_name if customer_name else '이름없음'
+                elif customer_name and customer.name != customer_name:
+                    customer.name = customer_name
+                customer.save()
+            else:
+                customer = None
+
             order.order_name = order_name
             order.order_date = order_date
             order.total_price = total_price

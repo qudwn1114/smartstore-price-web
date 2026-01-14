@@ -32,9 +32,9 @@
                         {% if page_obj %}
                             {% for i in page_obj %}
                             <tr>  
-                            <td><a class="text-heading text-truncate btn-edit-order" href="javascript:;" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-total_price="{{i.total_price}}" data-status="{{ i.status }}" data-customer_id="{{ i.customer.id|default:'' }}" data-comment="{{ i.comment|default:'' }}">{{i.order_name}}</a></td>
+                            <td><a class="text-heading text-truncate btn-edit-order" href="javascript:;" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-total_price="{{i.total_price}}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}">{{i.order_name}}</a></td>
                             <td>
-                                <span class="text-nowrap cursor-pointer btn-edit-order" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-total_price="{{i.total_price}}" data-status="{{ i.status }}" data-customer_id="{{ i.customer.id|default:'' }}" data-comment="{{ i.comment|default:'' }}">{{i.order_date}}</span>
+                                <span class="text-nowrap cursor-pointer btn-edit-order" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-total_price="{{i.total_price}}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}">{{i.order_date}}</span>
                             </td>
 
                             <td>
@@ -53,7 +53,7 @@
                                     </div>
                                     </div>
                                     <div class="d-flex flex-column">
-                                        <a href="javascript:;" class="text-heading text-truncate btn-edit-order" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-total_price="{{i.total_price}}" data-status="{{ i.status }}" data-customer_id="{{ i.customer.id|default:'' }}" data-comment="{{ i.comment|default:'' }}">
+                                        <a href="javascript:;" class="text-heading text-truncate btn-edit-order" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-total_price="{{i.total_price}}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}">
                                         <span class="fw-medium">
                                             {% if i.customer %}
                                                 {{ i.customer.name }}
@@ -66,7 +66,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td><span class="cursor-pointer btn-edit-order" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-total_price="{{i.total_price}}" data-status="{{ i.status }}" data-customer_id="{{ i.customer.id|default:'' }}" data-comment="{{ i.comment|default:'' }}">{{i.total_price|intcomma}}원</span></td>
+                            <td><span class="cursor-pointer btn-edit-order" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-total_price="{{i.total_price}}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}">{{i.total_price|intcomma}}원</span></td>
                             <td>
                                 <select class="select2 select-event-label form-select form-select-sm select2-order-status" data-order-id="{{ i.id }}" data-prev-status="{{ i.status }}">
                                     <option data-label="primary" value="0" {% if i.status == '0'%}selected{% endif %}>주문</option>
@@ -79,7 +79,7 @@
                                 <div class="dropdown">
                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line"></i></button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item btn-edit-order" href="javascript:;" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-total_price="{{i.total_price}}" data-status="{{ i.status }}" data-customer_id="{{ i.customer.id|default:'' }}" data-comment="{{ i.comment|default:'' }}"><i class="ri-pencil-line me-1"></i> 수정</a>
+                                    <a class="dropdown-item btn-edit-order" href="javascript:;" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-total_price="{{i.total_price}}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}"><i class="ri-pencil-line me-1"></i> 수정</a>
                                     <a class="dropdown-item btn-delete" href="javascript:;" data-order-id="{{i.id}}" data-order_name="{{i.order_name}}"><i class="ri-delete-bin-line me-1"></i> 삭제</a>
                                 </div>
                                 </div>
@@ -131,13 +131,21 @@
                 <hr>
                 <h6>선택입력</h6>
                 <div class="form-floating form-floating-outline form-floating-bootstrap-select mb-3">
-                    <select id="editCustomers" name="customer_id" class="selectpicker w-100" data-style="btn-default" data-live-search="true" data-show-subtext="true" title="고객명 또는 전화번호로 검색해주세요.">
+                    <select id="editCustomers" class="selectpicker w-100" data-style="btn-default" data-live-search="true" data-show-subtext="true" title="고객명 또는 전화번호로 검색해주세요.">
                         <option value="">미등록</option>
                         {% for i in customers %}
-                            <option data-tokens="{{i.phone}}" data-subtext="{{i.phone}}" value={{i.id}}>{{i.name}}</option>
+                            <option data-tokens="{{i.phone}}" data-subtext="{{i.phone}}" value={{i.phone}}>{{i.name}}</option>
                         {% endfor %}
                     </select>
                     <label for="editCustomers">고객</label>
+                </div>
+                <div class="form-floating form-floating-outline mb-3">
+                  <input type="text" class="form-control" id="editCustomerName" placeholder="고객명" name="customer_name" aria-label="고객명" />
+                  <label for="editCustomerName">고객명</label>
+                </div>
+                <div class="form-floating form-floating-outline mb-3">
+                    <input type="tel" id="editCustomerPhone" name="customer_phone" class="form-control number-only" placeholder="고객 연락처" maxlength="11"/>
+                    <label for="editCustomerPhone">고객 연락처</label>
                 </div>
                 <div class="form-floating form-floating-outline mb-3">
                     <textarea class="form-control h-px-75" name="comment" id="editComment" placeholder="주문 비고"></textarea>
@@ -156,6 +164,7 @@
         <hr class="my-12">
     </div>
 </div>
+{{ customers|json_script:"customers-data" }}
 {% endblock %}
 
 <!-- Specific Page JS goes HERE  -->
@@ -163,6 +172,12 @@
 <script src="{% static 'system/assets/vendor/libs/bootstrap-datepicker/bootstrap-datepicker.js' %}"></script>
 <script src="{% static 'system/assets/vendor/libs/bootstrap-datepicker/locales/bootstrap-datepicker.ko.min.js' %}"></script>
 <script>
+    const customers = JSON.parse(document.getElementById('customers-data').textContent);
+    const customerByPhone = new Map();
+    customers.forEach(c => {
+        customerByPhone.set(c.phone, c);
+    });
+
     $("#editOrderDate").datepicker({ 
       format: "yyyy-mm-dd",
       language: "ko",  // 한글 설정
@@ -172,5 +187,5 @@
     });
 </script>
 <script src="{% static 'js/script_pagination.js' %}"></script>
-<script src="{% static 'system/js/customer_manage/script_customer_order_manage.js' %}?v=2"></script>
+<script src="{% static 'system/js/customer_manage/script_customer_order_manage.js' %}?v=3"></script>
 {% endblock javascripts %}

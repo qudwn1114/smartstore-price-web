@@ -10,13 +10,71 @@ const editComment = document.getElementById('editComment');
 const btnEdit = document.getElementById('btnEdit');
 const btnDelete = document.getElementById('btnDelete');
 
-$('#customers').selectpicker({
-  container: '#createOrder .offcanvas-body'
-});
+let syncing = false;
+let originalCustomerName = null;
+let selectedCustomerPhone = null;
 
 $('#editCustomers').selectpicker({
   container: '#editOrder .offcanvas-body'
 });
+
+$('#editCustomers').on('changed.bs.select', function () {
+    if (syncing) return;
+    syncing = true;
+
+    const $selected = $(this).find('option:selected');
+
+    // 미등록 선택 시 초기화
+    if (!$selected.val()) {
+        originalCustomerName = null;
+        selectedCustomerPhone = null;
+        $('#editCustomerName').val('');
+        $('#editCustomerPhone').val('');
+        syncing = false;
+        return;
+    }
+
+    const name = $selected.text().trim();
+    const phone = $selected.val(); // value에 phone 넣어놨음
+
+    originalCustomerName = name; 
+    selectedCustomerPhone = phone;
+
+    $('#editCustomerName').val(name);
+    $('#editCustomerPhone').val(phone);
+    syncing = false;
+});
+
+$('#editCustomerPhone').on('input', function () {
+    if (syncing) return;
+    const phone = this.value
+    if (phone.length < 10) {
+        syncing = true;
+        $('#editCustomers').selectpicker('val', '');
+        syncing = false;
+        return;
+    }
+
+    // 🔹 기존 고객 매칭
+    if (customerByPhone.has(phone)) {
+        const c = customerByPhone.get(phone);
+
+        originalCustomerName = c.name;
+        selectedCustomerPhone = c.phone;
+
+        syncing = true;
+        $('#editCustomers').selectpicker('val', c.phone).trigger('changed.bs.select');
+        $('#editCustomerName').val(c.name);
+        syncing = false;
+    } else {
+        // 🔹 신규 고객
+        syncing = true;
+        $('#editCustomers').selectpicker('val', '');
+        syncing = false;
+    }
+});
+
+
 
 function renderBadges(option) {
     if (!option.id) {
@@ -150,13 +208,15 @@ document.querySelectorAll('.btn-delete').forEach(function (btn) {
 
 document.querySelectorAll('.btn-edit-order').forEach(function (el) {
     el.addEventListener('click', function () {
+        originalCustomerName = this.dataset.customer_name;
+        selectedCustomerPhone = this.dataset.customer_phone;
         editOrderId.value = this.dataset.id;
         editOrderName.value = this.dataset.order_name;
         editOrderDate.value = this.dataset.order_date;
         editTotalPrice.value = this.dataset.total_price;
         editComment.value = this.dataset.comment || '';
         editOrderStatus.val(this.dataset.status).trigger('change');
-        $('#editCustomers').selectpicker('val', this.dataset.customer_id || '');
+        $('#editCustomers').selectpicker('val', this.dataset.customer_phone || '');
     });
 });
 
@@ -165,8 +225,17 @@ btnEdit.addEventListener("click", () => {
     if (!editValidation()) {
         return;
     }
+    const currentName = $('#editCustomerName').val().trim();
+    let confirmText = '';
+    if (originalCustomerName && currentName && originalCustomerName !== currentName) {
+        confirmText = `
+            기존 고객명 "${originalCustomerName}" 이(가)
+            "${currentName}" 으로 변경되어 저장됩니다.
+        `;
+    }
     customConfirm({
         title: "주문 정보 수정 하시겠습니까?",
+        text: confirmText,
         confirmButtonText: "저장",
         cancelButtonText: "취소",
         onConfirm: function() {
