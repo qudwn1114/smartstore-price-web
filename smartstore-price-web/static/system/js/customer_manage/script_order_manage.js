@@ -527,8 +527,13 @@ function updateOrderStatus(orderId, status, $select, prevStatus) {
             order_id: orderId,
             status: status,
         },
-        success: function (res) {
+        success: function (response) {
             $select.data('prev-status', status);
+            for (const key in response.status_count) {
+                $('#status_count_' + key).text(
+                    numberWithCommas(response.status_count[key])
+                );
+            }
         },
         error: function () {
             if (error.status == 401) {
@@ -545,4 +550,9 @@ function updateOrderStatus(orderId, status, $select, prevStatus) {
             rollbackSelect($select, prevStatus);
         }
     });
+}
+
+
+function numberWithCommas(x) {
+    return Number(x).toLocaleString();
 }

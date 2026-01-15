@@ -135,9 +135,9 @@ class Customer(models.Model):
 class Order(models.Model):
     STATUS_CHOICES = [
         ('0', '주문요청'),
-        ('1', '제작완료'),
-        ('2', '수령완료'),
-        ('3', '취소')
+        ('1', '주문완료'),
+        ('2', '전달완료'),
+        ('3', '주문취소')
     ]
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, related_name='orders', null=True)
     order_name = models.CharField(max_length=100, verbose_name='주문명')

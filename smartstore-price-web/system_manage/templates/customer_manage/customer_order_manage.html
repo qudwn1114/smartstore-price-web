@@ -13,18 +13,27 @@
         <!-- Hoverable Table rows -->
         <div class="card">
             <div class="card-header d-flex align-items-center justify-content-between">
-                <h5 class="card-title mb-0">{{customer.name}} 고객님의 주문 정보 <div class="badge bg-label-primary rounded-pill">{{total_count|intcomma}} 건</h5>
+                <h5 class="card-title">{{customer.name}} 고객님의 주문 정보 <span class="badge bg-label-primary rounded-pill">{{total_count|intcomma}} 건</span></h5>
+                <div class="d-flex align-items-center gap-2">
+                    <select id="status" class="form-select form-select-sm" onchange="location.href='?status='+this.value">
+                        <option value="" {% if status == ''%}selected{% endif %}>전체</option>
+                        <option value="0" {% if status == '0'%}selected{% endif %}>주문요청</option>
+                        <option value="1" {% if status == '1'%}selected{% endif %}>주문완료</option>
+                        <option value="2" {% if status == '2'%}selected{% endif %}>전달완료</option>
+                        <option value="3" {% if status == '3'%}selected{% endif %}>주문취소</option>
+                    </select>
+                </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive text-nowrap">
                     <table class="table table-sm table-hover">
                         <thead>
                         <tr>
-                            <th>주문명  <a href="?search_keyword={{search_keyword}}&sort=order_name&order={% if order == 'asc' and sort == 'order_name' %}desc{% else %}asc{% endif %}">{% if sort == 'order_name' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
-                            <th>주문일 <a href="?search_keyword={{search_keyword}}&sort=order_date&order={% if order == 'asc' and sort == 'order_date' %}desc{% else %}asc{% endif %}">{% if sort == 'order_date' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
+                            <th>주문명  <a href="?sort=order_name&order={% if order == 'asc' and sort == 'order_name' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'order_name' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
+                            <th>주문일 <a href="?sort=order_date&order={% if order == 'asc' and sort == 'order_date' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'order_date' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
                             <th>회원</th>
-                            <th>금액 <a href="?search_keyword={{search_keyword}}&sort=total_price&order={% if order == 'asc' and sort == 'total_price' %}desc{% else %}asc{% endif %}">{% if sort == 'total_price' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>                            
-                            <th>상태 <a href="?search_keyword={{search_keyword}}&sort=status&order={% if order == 'asc' and sort == 'status' %}desc{% else %}asc{% endif %}">{% if sort == 'status' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
+                            <th>금액 <a href="?sort=total_price&order={% if order == 'asc' and sort == 'total_price' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'total_price' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>                            
+                            <th>상태 <a href="?sort=status&order={% if order == 'asc' and sort == 'status' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'status' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
                             <th></th>
                         </tr>
                         </thead>
@@ -69,10 +78,10 @@
                             <td><span class="cursor-pointer btn-edit-order" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-total_price="{{i.total_price}}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}">{{i.total_price|intcomma}}원</span></td>
                             <td>
                                 <select class="select2 select-event-label form-select form-select-sm select2-order-status" data-order-id="{{ i.id }}" data-prev-status="{{ i.status }}">
-                                    <option data-label="primary" value="0" {% if i.status == '0'%}selected{% endif %}>주문</option>
-                                    <option data-label="warning" value="1" {% if i.status == '1'%}selected{% endif %}>제작완료</option>
+                                    <option data-label="primary" value="0" {% if i.status == '0'%}selected{% endif %}>주문요청</option>
+                                    <option data-label="warning" value="1" {% if i.status == '1'%}selected{% endif %}>주문완료</option>
                                     <option data-label="success" value="2" {% if i.status == '2'%}selected{% endif %}>전달완료</option>
-                                    <option data-label="danger" value="3" {% if i.status == '3'%}selected{% endif %}>취소</option>
+                                    <option data-label="danger" value="3" {% if i.status == '3'%}selected{% endif %}>주문취소</option>
                                 </select>
                             </td>
                             <td>
@@ -121,10 +130,10 @@
                 </div>
                 <div class="form-floating form-floating-outline mb-3">
                     <select class="select2 select-event-label form-select" id="editOrderStatus" name="status">
-                        <option data-label="primary" value="0">주문</option>
-                        <option data-label="warning" value="1">제작완료</option>
+                        <option data-label="primary" value="0">주문요청</option>
+                        <option data-label="warning" value="1">주문완료</option>
                         <option data-label="success" value="2">전달완료</option>
-                        <option data-label="danger" value="3">취소</option>
+                        <option data-label="danger" value="3">주문취소</option>
                     </select>
                     <label for="editOrderStatus">상태</label>
                 </div>

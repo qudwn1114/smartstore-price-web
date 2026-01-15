@@ -10,14 +10,89 @@
 {% block content %}
 <div class="content-wrapper">
     <div class="container-xxl flex-grow-1 container-p-y">
+        <div class="card mb-6">
+          <div class="card-widget-separator-wrapper">
+            <div class="card-body card-widget-separator">
+              <div class="row gy-4 gy-sm-1">
+                <div class="col-sm-6 col-lg-3">
+                  <div
+                    class="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
+                    <div>
+                      <h4 class="mb-0" id="status_count_0">{{status_count.0|intcomma}}</h4>
+                      <p class="mb-0">주문요청</p>
+                    </div>
+                    <div class="avatar me-sm-6">
+                      <a class="avatar-initial rounded-3" href="?search_keyword={{search_keyword}}&status=0">
+                        <i class="ri-list-check-2 text-heading ri-26px"></i>
+                      </a>
+                    </div>
+                  </div>
+                  <hr class="d-none d-sm-block d-lg-none me-6" />
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                  <div
+                    class="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
+                    <div>
+                      <h4 class="mb-0" id="status_count_1">{{status_count.1|intcomma}}</h4>
+                      <p class="mb-0">준비완료</p>
+                    </div>
+                    <div class="avatar me-lg-6">
+                      <a class="avatar-initial rounded-3" href="?search_keyword={{search_keyword}}&status=1">
+                        <i class="ri-list-check-3 text-heading ri-26px"></i>
+                      </a>
+                    </div>
+                  </div>
+                  <hr class="d-none d-sm-block d-lg-none" />
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                  <div
+                    class="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
+                    <div>
+                      <h4 class="mb-0" id="status_count_2">{{status_count.2|intcomma}}</h4>
+                      <p class="mb-0">전달완료</p>
+                    </div>
+                    <div class="avatar me-sm-6">
+                      <a class="avatar-initial rounded-3" href="?search_keyword={{search_keyword}}&status=2">
+                        <i class="ri-check-double-line text-heading ri-26px"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h4 class="mb-0" id="status_count_3">{{status_count.3|intcomma}}</h4>
+                      <p class="mb-0">주문취소</p>
+                    </div>
+                    <div class="avatar">
+                      <a class="avatar-initial rounded-3" href="?search_keyword={{search_keyword}}&status=3">
+                        <i class="ri-error-warning-line text-heading ri-26px"></i>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <!-- Hoverable Table rows -->
         <div class="card">
             <div class="card-header d-flex align-items-center justify-content-between">
-                <h5 class="card-title mb-0">주문 정보 <div class="badge bg-label-primary rounded-pill">{{total_count|intcomma}} 건</h5>
-                <div>
-                    <a href="#" class="btn btn-label-secondary btn-sm" href="javascript:;"data-bs-toggle="offcanvas" data-bs-target="#createOrder"><span><i class="ri-add-line me-2"></i>주문 등록</span></a>
+                <div class="d-flex align-items-center">
+                    <select id="status" class="form-select form-select-sm" onchange="location.href='?search_keyword={{search_keyword}}&status='+this.value">
+                        <option value="" {% if status == ''%}selected{% endif %}>전체</option>
+                        <option value="0" {% if status == '0'%}selected{% endif %}>주문요청</option>
+                        <option value="1" {% if status == '1'%}selected{% endif %}>주문완료</option>
+                        <option value="2" {% if status == '2'%}selected{% endif %}>전달완료</option>
+                        <option value="3" {% if status == '3'%}selected{% endif %}>주문취소</option>
+                    </select>
+                    <h5 class="card-header"><span class="badge bg-label-primary rounded-pill">{{ total_count|intcomma }} 건</span></h5>
                 </div>
+                <a href="javascript:;" class="btn btn-label-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#createOrder">
+                  <i class="ri-add-line me-2"></i>주문 등록
+                </a>
             </div>
+
             <div class="card-body">
                 <form id="search-form" method="get" action="">
                     <div class="row">
@@ -33,11 +108,11 @@
                     <table class="table table-sm table-hover">
                         <thead>
                         <tr>
-                            <th>주문명  <a href="?search_keyword={{search_keyword}}&sort=order_name&order={% if order == 'asc' and sort == 'order_name' %}desc{% else %}asc{% endif %}">{% if sort == 'order_name' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
-                            <th>주문일 <a href="?search_keyword={{search_keyword}}&sort=order_date&order={% if order == 'asc' and sort == 'order_date' %}desc{% else %}asc{% endif %}">{% if sort == 'order_date' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
-                            <th>회원 <a href="?search_keyword={{search_keyword}}&sort=customer__name&order={% if order == 'asc' and sort == 'customer__name' %}desc{% else %}asc{% endif %}">{% if sort == 'customer__name' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
-                            <th>금액 <a href="?search_keyword={{search_keyword}}&sort=total_price&order={% if order == 'asc' and sort == 'total_price' %}desc{% else %}asc{% endif %}">{% if sort == 'total_price' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>                            
-                            <th>상태 <a href="?search_keyword={{search_keyword}}&sort=status&order={% if order == 'asc' and sort == 'status' %}desc{% else %}asc{% endif %}">{% if sort == 'status' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
+                            <th>주문명  <a href="?search_keyword={{search_keyword}}&sort=order_name&order={% if order == 'asc' and sort == 'order_name' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'order_name' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
+                            <th>주문일 <a href="?search_keyword={{search_keyword}}&sort=order_date&order={% if order == 'asc' and sort == 'order_date' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'order_date' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
+                            <th>회원 <a href="?search_keyword={{search_keyword}}&sort=customer__name&order={% if order == 'asc' and sort == 'customer__name' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'customer__name' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
+                            <th>금액 <a href="?search_keyword={{search_keyword}}&sort=total_price&order={% if order == 'asc' and sort == 'total_price' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'total_price' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>                            
+                            <th>상태 <a href="?search_keyword={{search_keyword}}&sort=status&order={% if order == 'asc' and sort == 'status' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'status' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
                             <th></th>
                         </tr>
                         </thead>
@@ -82,10 +157,10 @@
                             <td><span class="cursor-pointer btn-edit-order" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-total_price="{{i.total_price}}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}">{{i.total_price|intcomma}}원</span></td>
                             <td>
                                 <select class="select2 select-event-label form-select form-select-sm select2-order-status" data-order-id="{{ i.id }}" data-prev-status="{{ i.status }}">
-                                    <option data-label="primary" value="0" {% if i.status == '0'%}selected{% endif %}>주문</option>
-                                    <option data-label="warning" value="1" {% if i.status == '1'%}selected{% endif %}>제작완료</option>
+                                    <option data-label="primary" value="0" {% if i.status == '0'%}selected{% endif %}>주문요청</option>
+                                    <option data-label="warning" value="1" {% if i.status == '1'%}selected{% endif %}>주문완료</option>
                                     <option data-label="success" value="2" {% if i.status == '2'%}selected{% endif %}>전달완료</option>
-                                    <option data-label="danger" value="3" {% if i.status == '3'%}selected{% endif %}>취소</option>
+                                    <option data-label="danger" value="3" {% if i.status == '3'%}selected{% endif %}>주문취소</option>
                                 </select>
                             </td>
                             <td>
@@ -133,10 +208,10 @@
                 </div>
                 <div class="form-floating form-floating-outline mb-3">
                     <select class="select2 select-event-label form-select" id="orderStatus" name="status">
-                        <option data-label="primary" value="0" selected>주문</option>
-                        <option data-label="warning" value="1">제작완료</option>
+                        <option data-label="primary" value="0" selected>주문요청</option>
+                        <option data-label="warning" value="1">주문완료</option>
                         <option data-label="success" value="2">전달완료</option>
-                        <option data-label="danger" value="3">취소</option>
+                        <option data-label="danger" value="3">주문취소</option>
                     </select>
                     <label for="orderStatus">상태</label>
                 </div>
@@ -197,10 +272,10 @@
                 </div>
                 <div class="form-floating form-floating-outline mb-3">
                     <select class="select2 select-event-label form-select" id="editOrderStatus" name="status">
-                        <option data-label="primary" value="0">주문</option>
-                        <option data-label="warning" value="1">제작완료</option>
+                        <option data-label="primary" value="0">주문요청</option>
+                        <option data-label="warning" value="1">주문완료</option>
                         <option data-label="success" value="2">전달완료</option>
-                        <option data-label="danger" value="3">취소</option>
+                        <option data-label="danger" value="3">주문취소</option>
                     </select>
                     <label for="editOrderStatus">상태</label>
                 </div>
@@ -270,5 +345,5 @@
     });
 </script>
 <script src="{% static 'js/script_pagination.js' %}"></script>
-<script src="{% static 'system/js/customer_manage/script_order_manage.js' %}?v=3"></script>
+<script src="{% static 'system/js/customer_manage/script_order_manage.js' %}?v=4"></script>
 {% endblock javascripts %}

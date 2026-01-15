@@ -17,7 +17,7 @@ from django.conf import settings
 from system_manage.decorators import permission_required
 from system_manage.views.system_manage_views.auth_views import validate_birth, validate_phone
 from system_manage.models import Customer, Order
-from system_manage.services.customer_cache import get_cached_customers
+from system_manage.services.customer_cache import get_cached_customers, get_cached_order_status_count
 
 
 class OrderManageView(View):
@@ -36,17 +36,25 @@ class OrderManageView(View):
 
         order = request.GET.get('order', 'desc')
         sort = request.GET.get('sort', 'created_at')
+        status = request.GET.get('status', '0')
+
         context['order'] = order
         context['sort'] = sort
+        context['status'] = status
 
         context['customers'] = get_cached_customers()
+        context['status_count'] = get_cached_order_status_count()
 
         if order == 'desc':
             ordering = [f'-{sort}', '-id']
         else:
             ordering = [f'{sort}', 'id']
 
-        query = Q()
+        if status:
+            query = Q(status=status)
+        else:
+            query = Q()
+
         if search_keyword:
             search_q = Q(customer__name__icontains=search_keyword)
             if search_keyword.isdigit():
@@ -203,8 +211,9 @@ def order_status(request):
             order.save()
     except:
         return JsonResponse({'message': 'Error occurred while updating order.'}, status=400)
+    status_count_dict = get_cached_order_status_count()
 
-    return JsonResponse({'message': '업데이트 되었습니다.'}, status=200)
+    return JsonResponse({'message': '업데이트 되었습니다.', 'status_count': status_count_dict}, status=200)
 
 
 
@@ -228,8 +237,11 @@ class CustomerOrderManageView(View):
 
         order = request.GET.get('order', 'desc')
         sort = request.GET.get('sort', 'created_at')
+        status = request.GET.get('status', '')
+
         context['order'] = order
         context['sort'] = sort
+        context['status'] = status
 
         if order == 'desc':
             ordering = [f'-{sort}', '-id']
@@ -239,7 +251,10 @@ class CustomerOrderManageView(View):
         context['customers'] = get_cached_customers()
 
 
-        query = Q(customer=customer)
+        if status:
+            query = Q(customer=customer, status=status)
+        else:
+            query = Q(customer=customer)
 
         queryset = Order.objects.filter(query).annotate(
             avatar_number=Case(
