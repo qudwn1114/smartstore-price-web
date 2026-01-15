@@ -1,10 +1,11 @@
 const order_status = $('#order_status');
 
+const editModal = document.getElementById('editOrder');
 const editOrderId = document.getElementById('editOrderId');
 const editOrderName = document.getElementById('editOrderName');
 const editOrderDate = document.getElementById('editOrderDate');
 const editOrderStatus = $('#editOrderStatus');
-const editTotalPrice = document.getElementById('editTotalPrice');
+const editOrderNote = document.getElementById('editOrderNote');
 const editComment = document.getElementById('editComment');
 
 const btnEdit = document.getElementById('btnEdit');
@@ -156,10 +157,6 @@ function editValidation(){
         editOrderDate.focus();
         return false;
     }
-    if(editTotalPrice.value == ''){
-        editTotalPrice.focus();
-        return false;
-    }
     return true;
 }
 
@@ -213,10 +210,16 @@ document.querySelectorAll('.btn-edit-order').forEach(function (el) {
         editOrderId.value = this.dataset.id;
         editOrderName.value = this.dataset.order_name;
         editOrderDate.value = this.dataset.order_date;
-        editTotalPrice.value = this.dataset.total_price;
+        editOrderNote.value = this.dataset.order_note;
         editComment.value = this.dataset.comment || '';
         editOrderStatus.val(this.dataset.status).trigger('change');
         $('#editCustomers').selectpicker('val', this.dataset.customer_phone || '');
+        const optionValue = this.dataset.option;
+        if (optionValue !== undefined) {
+            editModal.querySelectorAll('input[name="option"]').forEach(radio => {
+                radio.checked = (radio.value === optionValue);
+            });
+        }
     });
 });
 
@@ -356,6 +359,11 @@ function updateOrderStatus(orderId, status, $select, prevStatus) {
         },
         success: function (res) {
             $select.data('prev-status', status);
+            const $row = $select.closest('tr');
+            $row.find('.btn-edit-order').each(function () {
+                $(this).data('status', status);
+                this.dataset.status = status;
+            });
         },
         error: function () {
             if (error.status == 401) {

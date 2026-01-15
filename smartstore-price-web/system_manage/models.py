@@ -123,7 +123,7 @@ class Customer(models.Model):
     name = models.CharField(max_length=50, verbose_name='회원명')
     phone = models.CharField(max_length=20, verbose_name='전화번호', unique=True, null=True)
     gender = models.CharField(null=True, max_length=10, verbose_name='성별', choices=(('MALE', '남성'), ('FEMALE', '여성')))
-    comment = models.TextField(null=True, verbose_name='비고')
+    comment = models.TextField(verbose_name='비고', default='')
     birth = models.DateField(verbose_name='생년월일', null=True)
     delete_flag = models.BooleanField(default=False, verbose_name='삭제 여부')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='생성일')
@@ -139,10 +139,16 @@ class Order(models.Model):
         ('2', '전달완료'),
         ('3', '주문취소')
     ]
+    OPTION_CHOICES = [
+        ('0', '없음'),
+        ('1', '환산'),
+        ('2', '별도'),
+    ]
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, related_name='orders', null=True)
     order_name = models.CharField(max_length=100, verbose_name='주문명')
+    order_note = models.CharField(max_length=100, verbose_name='중요', default='')
+    option = models.CharField(max_length=10, choices=OPTION_CHOICES, verbose_name='옵션상태', default='0')
     order_date = models.DateField(verbose_name='주문일')
-    total_price = models.PositiveIntegerField(verbose_name='총 가격')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, verbose_name='주문상태', default='0')
     comment = models.TextField(null=True, verbose_name='비고')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='생성일')

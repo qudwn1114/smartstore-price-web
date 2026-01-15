@@ -2,15 +2,17 @@ const order_status = $('#order_status');
 const btnSubmit = document.getElementById("btnSubmit");
 const orderName = document.getElementById('orderName');
 const orderDate = document.getElementById('orderDate');
-const totalPrice = document.getElementById('totalPrice');
+const orderNote = document.getElementById('orderNote');
 const orderStatus = $('#orderStatus');
 
+const editModal = document.getElementById('editOrder');
 const editOrderId = document.getElementById('editOrderId');
 const editOrderName = document.getElementById('editOrderName');
 const editOrderDate = document.getElementById('editOrderDate');
 const editOrderStatus = $('#editOrderStatus');
-const editTotalPrice = document.getElementById('editTotalPrice');
+const editOrderNote = document.getElementById('editOrderNote');
 const editComment = document.getElementById('editComment');
+
 
 const btnEdit = document.getElementById('btnEdit');
 const btnDelete = document.getElementById('btnDelete');
@@ -250,10 +252,6 @@ function validation(){
         orderDate.focus();
         return false;   
     }
-    if(totalPrice.value == ''){
-        totalPrice.focus();
-        return false;
-    }
     return true;
 }
 
@@ -264,10 +262,6 @@ function editValidation(){
     }
     if(editOrderDate.value == ''){
         editOrderDate.focus();
-        return false;
-    }
-    if(editTotalPrice.value == ''){
-        editTotalPrice.focus();
         return false;
     }
     return true;
@@ -386,10 +380,17 @@ document.querySelectorAll('.btn-edit-order').forEach(function (el) {
         editOrderId.value = this.dataset.id;
         editOrderName.value = this.dataset.order_name;
         editOrderDate.value = this.dataset.order_date;
-        editTotalPrice.value = this.dataset.total_price;
+        editOrderNote.value = this.dataset.order_note;
         editComment.value = this.dataset.comment || '';
         editOrderStatus.val(this.dataset.status).trigger('change');
         $('#editCustomers').selectpicker('val', this.dataset.customer_phone || '');
+
+        const optionValue = this.dataset.option;
+        if (optionValue !== undefined) {
+            editModal.querySelectorAll('input[name="option"]').forEach(radio => {
+                radio.checked = (radio.value === optionValue);
+            });
+        }
     });
 });
 
@@ -529,6 +530,11 @@ function updateOrderStatus(orderId, status, $select, prevStatus) {
         },
         success: function (response) {
             $select.data('prev-status', status);
+            const $row = $select.closest('tr');
+            $row.find('.btn-edit-order').each(function () {
+                $(this).data('status', status);
+                this.dataset.status = status;
+            });
             for (const key in response.status_count) {
                 $('#status_count_' + key).text(
                     numberWithCommas(response.status_count[key])

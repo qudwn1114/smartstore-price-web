@@ -94,7 +94,10 @@ class OrderManageView(View):
         order_date = request.POST['order_date']
         if not validate_birth(order_date):
             return JsonResponse({'message': '주문날짜 형식 오류'}, status=400)
-        total_price = int(request.POST['total_price'])
+        order_note = request.POST['order_note'].strip()
+        option = request.POST['option']
+        if option not in ['0', '1', '2']:
+            return JsonResponse({'message': '옵션 형식 오류'}, status=400)
         status = request.POST['status']
         if status not in ['0', '1', '2', '3']:
             return JsonResponse({'message': '상태 형식 오류'}, status=400)
@@ -120,7 +123,8 @@ class OrderManageView(View):
                 Order.objects.create(
                     order_name = order_name,
                     order_date = order_date,
-                    total_price = total_price,
+                    order_note = order_note,
+                    option = option,
                     status = status,
                     customer = customer,
                     comment = comment
@@ -143,7 +147,10 @@ def edit_order(request):
     order_date = request.POST['order_date']
     if not validate_birth(order_date):
         return JsonResponse({'message': '주문날짜 형식 오류'}, status=400)
-    total_price = int(request.POST['total_price'])
+    order_note = request.POST['order_note'].strip()
+    option = request.POST['option']
+    if option not in ['0', '1', '2']:
+        return JsonResponse({'message': '옵션 형식 오류'}, status=400)
     status = request.POST['status']
     
     if status not in ['0', '1', '2', '3']:
@@ -168,7 +175,8 @@ def edit_order(request):
 
             order.order_name = order_name
             order.order_date = order_date
-            order.total_price = total_price
+            order.order_note = order_note
+            order.option = option
             order.status =status
             order.comment = comment
             order.customer = customer

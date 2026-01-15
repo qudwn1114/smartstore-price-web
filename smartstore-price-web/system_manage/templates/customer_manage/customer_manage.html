@@ -48,13 +48,13 @@
                                 <div class="d-flex justify-content-start align-items-center">
                                     <div class="avatar-wrapper">
                                     <div class="avatar avatar-sm me-3">
-                                        <a href="javascript:;" class="btn-edit-user" data-bs-toggle="offcanvas" data-bs-target="#editUser" data-id="{{ i.id }}" data-name="{{ i.name }}" data-phone="{{ i.phone }}" data-birth="{{ i.birth|date:'Y-m-d' }}" data-gender="{{ i.gender|default_if_none:'' }}" data-comment="{{ i.comment|default:'' }}">
+                                        <a href="javascript:;" class="btn-edit-user" data-bs-toggle="offcanvas" data-bs-target="#editUser" data-id="{{ i.id }}" data-name="{{ i.name }}" data-phone="{{ i.phone }}" data-birth="{{ i.birth|date:'Y-m-d' }}" data-gender="{{ i.gender|default_if_none:'' }}" data-comment="{{ i.comment|default:'' }}" data-option="{{ i.option }}">
                                             <img src="{% static 'system/assets/img/avatars/' %}{{ i.avatar_number }}.png" alt="Avatar" class="rounded-circle">
                                         </a>
                                     </div>
                                     </div>
                                     <div class="d-flex flex-column">
-                                    <a href="javascript:;" class="text-heading text-truncate btn-edit-user" data-bs-toggle="offcanvas" data-bs-target="#editUser" data-id="{{ i.id }}" data-name="{{ i.name }}" data-phone="{{ i.phone }}" data-birth="{{ i.birth|date:'Y-m-d' }}" data-gender="{{ i.gender|default_if_none:'' }}" data-comment="{{ i.comment|default:'' }}">
+                                    <a href="javascript:;" class="text-heading text-truncate btn-edit-user" data-bs-toggle="offcanvas" data-bs-target="#editUser" data-id="{{ i.id }}" data-name="{{ i.name }}" data-phone="{{ i.phone }}" data-birth="{{ i.birth|date:'Y-m-d' }}" data-gender="{{ i.gender|default_if_none:'' }}" data-comment="{{ i.comment|default:'' }}" data-option="{{ i.option }}">
                                         <span class="fw-medium">{{i.name}}</span>
                                     </a>
                                     <small class="text-truncate">고객님</small>
@@ -62,7 +62,7 @@
                                 </div>
 
                             </td>
-                            <td><a class="text-heading btn-edit-user" href="javascript:;" data-bs-toggle="offcanvas" data-bs-target="#editUser" data-id="{{ i.id }}" data-name="{{ i.name }}" data-phone="{{ i.phone }}" data-birth="{{ i.birth|date:'Y-m-d' }}" data-gender="{{ i.gender|default_if_none:'' }}" data-comment="{{ i.comment|default:'' }}">{{i.phone}}</a></td>
+                            <td><a class="text-heading btn-edit-user" href="javascript:;" data-bs-toggle="offcanvas" data-bs-target="#editUser" data-id="{{ i.id }}" data-name="{{ i.name }}" data-phone="{{ i.phone }}" data-birth="{{ i.birth|date:'Y-m-d' }}" data-gender="{{ i.gender|default_if_none:'' }}" data-comment="{{ i.comment|default:'' }}" data-option="{{ i.option }}">{{i.phone}}</a></td>
                             <td>
                               {% if i.order_count > 0 %}
                               <a href="{% url 'system_manage:customer_order_manage' i.pk %}">{{i.order_count|intcomma}}</a></td>
@@ -76,7 +76,7 @@
                                 <div class="dropdown">
                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line"></i></button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item btn-edit-user" href="javascript:;" data-bs-toggle="offcanvas" data-bs-target="#editUser" data-id="{{ i.id }}" data-name="{{ i.name }}" data-phone="{{ i.phone }}" data-birth="{{ i.birth|date:'Y-m-d' }}" data-gender="{{ i.gender|default_if_none:'' }}" data-comment="{{ i.comment|default:'' }}"><i class="ri-pencil-line me-1"></i> 수정</a>
+                                    <a class="dropdown-item btn-edit-user" href="javascript:;" data-bs-toggle="offcanvas" data-bs-target="#editUser" data-id="{{ i.id }}" data-name="{{ i.name }}" data-phone="{{ i.phone }}" data-birth="{{ i.birth|date:'Y-m-d' }}" data-gender="{{ i.gender|default_if_none:'' }}" data-comment="{{ i.comment|default:'' }}" data-option="{{ i.option }}"><i class="ri-pencil-line me-1"></i> 수정</a>
                                     <a class="dropdown-item btn-delete" href="javascript:;" data-customer-id="{{i.id}}" data-name="{{i.name}}"><i class="ri-delete-bin-line me-1"></i> 삭제</a>
                                 </div>
                                 </div>
