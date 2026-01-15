@@ -15,6 +15,9 @@
             <div class="card-header d-flex align-items-center justify-content-between">
                 <h5 class="card-title">{{customer.name}} 고객님의 주문 정보 <span class="badge bg-label-primary rounded-pill">{{total_count|intcomma}} 건</span></h5>
                 <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-outline-secondary btn-sm flex-shrink-0" onclick="excelExport();">
+                      <i class="ri-upload-2-line me-2"></i>다운로드
+                    </button>
                     <select id="status" class="form-select form-select-sm" onchange="location.href='?status='+this.value">
                         <option value="" {% if status == ''%}selected{% endif %}>전체</option>
                         <option value="0" {% if status == '0'%}selected{% endif %}>주문요청</option>
@@ -67,7 +70,7 @@
                               {% elif i.option == '2' %}
                               <span class="badge bg-label-warning">별도</span>
                               {% else %}
-                              <span class="badge bg-label-danger">오류</span>
+                              <span class="badge bg-label-danger">알수없음</span>
                               {% endif %}
                             </td>
                             <td>
@@ -207,5 +210,5 @@
     });
 </script>
 <script src="{% static 'js/script_pagination.js' %}"></script>
-<script src="{% static 'system/js/customer_manage/script_customer_order_manage.js' %}?v=5"></script>
+<script src="{% static 'system/js/customer_manage/script_customer_order_manage.js' %}?v=6"></script>
 {% endblock javascripts %}

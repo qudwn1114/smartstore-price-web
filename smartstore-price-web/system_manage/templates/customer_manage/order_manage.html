@@ -88,9 +88,14 @@
                     </select>
                     <h5 class="card-header"><span class="badge bg-label-primary rounded-pill">{{ total_count|intcomma }} 건</span></h5>
                 </div>
-                <a href="javascript:;" class="btn btn-label-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#createOrder">
-                  <i class="ri-add-line me-2"></i>주문 등록
-                </a>
+                <div class="d-flex align-items-center gap-2">
+                  <button type="button" class="btn btn-outline-secondary btn-sm" onclick="excelExport();">
+                    <i class="ri-upload-2-line me-2"></i>다운로드
+                  </button>
+                  <a href="javascript:;" class="btn btn-label-secondary btn-sm" data-bs-toggle="offcanvas" data-bs-target="#createOrder">
+                    <i class="ri-add-line me-2"></i>주문 등록
+                  </a>
+                </div>
             </div>
 
             <div class="card-body">
@@ -146,7 +151,7 @@
                               {% elif i.option == '2' %}
                               <span class="badge bg-label-warning">별도</span>
                               {% else %}
-                              <span class="badge bg-label-danger">오류</span>
+                              <span class="badge bg-label-danger">알수없음</span>
                               {% endif %}
                             </td>
                             <td>
@@ -374,5 +379,5 @@
     });
 </script>
 <script src="{% static 'js/script_pagination.js' %}"></script>
-<script src="{% static 'system/js/customer_manage/script_order_manage.js' %}?v=5"></script>
+<script src="{% static 'system/js/customer_manage/script_order_manage.js' %}?v=6"></script>
 {% endblock javascripts %}

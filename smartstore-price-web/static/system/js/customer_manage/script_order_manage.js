@@ -562,3 +562,20 @@ function updateOrderStatus(orderId, status, $select, prevStatus) {
 function numberWithCommas(x) {
     return Number(x).toLocaleString();
 }
+
+function excelExport(){
+    customConfirm({
+        title: '엑셀 파일을 다운로드 하시겠습니까?',
+        text: '검색 조건 및 필터가 적용된 데이터로 다운로드됩니다.',
+        confirmButtonText: '확인',
+        cancelButtonText: '취소',
+        onConfirm: () => {
+            const now = new URLSearchParams(window.location.search);
+            now.set('excel', '1');
+            window.location.search = now.toString();
+        },
+        onCancel: () => {
+            // 취소 시 아무 동작하지 않음
+        }
+    });
+}
