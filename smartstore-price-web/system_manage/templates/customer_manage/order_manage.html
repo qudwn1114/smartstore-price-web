@@ -14,63 +14,113 @@
           <div class="card-widget-separator-wrapper">
             <div class="card-body card-widget-separator">
               <div class="row gy-4 gy-sm-1">
+                <!-- 주문요청 -->
                 <div class="col-sm-6 col-lg-3">
-                  <div
-                    class="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
+                  <div class="d-flex justify-content-between align-items-start card-widget-1 border-end pb-4 pb-sm-0">
                     <div>
-                      <h4 class="mb-0" id="status_count_0">{{status_count.0|intcomma}}</h4>
-                      <p class="mb-0">주문요청</p>
+                      {% if status == '0' %}
+                      <h4 class="mb-0 text-primary" id="status_count_0">{{ status_count.0|intcomma }}</h4>
+                      <p class="mb-0 text-dark">주문요청</p>
+                      {% else %}
+                      <h4 class="mb-0" id="status_count_0">{{ status_count.0|intcomma }}</h4>
+                      <p class="mb-0"><a class="text-dark" href="?search_keyword={{ search_keyword|urlencode }}&status=0">주문요청</a></p>
+                      {% endif %}
                     </div>
                     <div class="avatar me-sm-6">
-                      <a class="avatar-initial rounded-3" href="?search_keyword={{search_keyword}}&status=0">
-                        <i class="ri-list-check-2 text-heading ri-26px"></i>
-                      </a>
+                      {% if status == '0' %}
+                        <div class="avatar-initial rounded-3 bg-label-primary" style="cursor: default;">
+                          <i class="ri-list-check-2 ri-26px"></i>
+                        </div>
+                      {% else %}
+                        <a class="avatar-initial rounded-3"
+                          href="?search_keyword={{ search_keyword|urlencode }}&status=0">
+                          <i class="ri-list-check-2 ri-26px text-heading"></i>
+                        </a>
+                      {% endif %}
                     </div>
                   </div>
                   <hr class="d-none d-sm-block d-lg-none me-6" />
                 </div>
                 <div class="col-sm-6 col-lg-3">
-                  <div
-                    class="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
+                  <div class="d-flex justify-content-between align-items-start card-widget-2 border-end pb-4 pb-sm-0">
                     <div>
-                      <h4 class="mb-0" id="status_count_1">{{status_count.1|intcomma}}</h4>
-                      <p class="mb-0">준비완료</p>
+                      {% if status == '1' %}
+                      <h4 class="mb-0 text-warning" id="status_count_1">{{ status_count.1|intcomma }}</h4>
+                      <p class="mb-0 text-dark">주문완료</p>
+                      {% else %}
+                      <h4 class="mb-0" id="status_count_1">{{ status_count.1|intcomma }}</h4>
+                      <p class="mb-0"><a class="text-dark" href="?search_keyword={{ search_keyword|urlencode }}&status=1">주문완료</a></p>
+                      {% endif %}
                     </div>
                     <div class="avatar me-lg-6">
-                      <a class="avatar-initial rounded-3" href="?search_keyword={{search_keyword}}&status=1">
-                        <i class="ri-list-check-3 text-heading ri-26px"></i>
-                      </a>
+                      {% if status == '1' %}
+                        <div class="avatar-initial rounded-3 bg-label-warning" style="cursor: default;">
+                          <i class="ri-list-check-3 ri-26px"></i>
+                        </div>
+                      {% else %}
+                        <a class="avatar-initial rounded-3"
+                          href="?search_keyword={{ search_keyword|urlencode }}&status=1">
+                          <i class="ri-list-check-3 ri-26px text-heading"></i>
+                        </a>
+                      {% endif %}
                     </div>
                   </div>
                   <hr class="d-none d-sm-block d-lg-none" />
                 </div>
+
+                <!-- 전달완료 -->
                 <div class="col-sm-6 col-lg-3">
-                  <div
-                    class="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
+                  <div class="d-flex justify-content-between align-items-start border-end pb-4 pb-sm-0 card-widget-3">
                     <div>
-                      <h4 class="mb-0" id="status_count_2">{{status_count.2|intcomma}}</h4>
-                      <p class="mb-0">전달완료</p>
+                      {% if status == '2' %}
+                      <h4 class="mb-0 text-success" id="status_count_2">{{ status_count.2|intcomma }}</h4>
+                      <p class="mb-0 text-dark">전달완료</p>
+                      {% else %}
+                      <h4 class="mb-0" id="status_count_2">{{ status_count.2|intcomma }}</h4>
+                      <p class="mb-0"><a class="text-dark" href="?search_keyword={{ search_keyword|urlencode }}&status=2">전달완료</a></p>
+                      {% endif %}
                     </div>
                     <div class="avatar me-sm-6">
-                      <a class="avatar-initial rounded-3" href="?search_keyword={{search_keyword}}&status=2">
-                        <i class="ri-check-double-line text-heading ri-26px"></i>
-                      </a>
+                      {% if status == '2' %}
+                        <div class="avatar-initial rounded-3 bg-label-success" style="cursor: default;">
+                          <i class="ri-check-double-line ri-26px"></i>
+                        </div>
+                      {% else %}
+                        <a class="avatar-initial rounded-3"
+                          href="?search_keyword={{ search_keyword|urlencode }}&status=2">
+                          <i class="ri-check-double-line ri-26px text-heading"></i>
+                        </a>
+                      {% endif %}
                     </div>
                   </div>
                 </div>
+                <!-- 주문취소 -->
                 <div class="col-sm-6 col-lg-3">
                   <div class="d-flex justify-content-between align-items-start">
                     <div>
-                      <h4 class="mb-0" id="status_count_3">{{status_count.3|intcomma}}</h4>
-                      <p class="mb-0">주문취소</p>
+                      {% if status == '3' %}
+                      <h4 class="mb-0 text-danger" id="status_count_3">{{ status_count.3|intcomma }}</h4>
+                      <p class="mb-0 text-dark">주문취소</p>
+                      {% else %}
+                      <h4 class="mb-0" id="status_count_3">{{ status_count.3|intcomma }}</h4>
+                      <p class="mb-0"><a class="text-dark" href="?search_keyword={{ search_keyword|urlencode }}&status=3">주문취소</a></p>
+                      {% endif %}
                     </div>
                     <div class="avatar">
-                      <a class="avatar-initial rounded-3" href="?search_keyword={{search_keyword}}&status=3">
-                        <i class="ri-error-warning-line text-heading ri-26px"></i>
-                      </a>
+                      {% if status == '3' %}
+                        <div class="avatar-initial rounded-3 bg-label-danger" style="cursor: default;">
+                          <i class="ri-error-warning-line ri-26px"></i>
+                        </div>
+                      {% else %}
+                        <a class="avatar-initial rounded-3"
+                          href="?search_keyword={{ search_keyword|urlencode }}&status=3">
+                          <i class="ri-error-warning-line ri-26px text-heading"></i>
+                        </a>
+                      {% endif %}
                     </div>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
@@ -79,7 +129,7 @@
         <div class="card">
             <div class="card-header d-flex align-items-center justify-content-between">
                 <div class="d-flex align-items-center">
-                    <select id="status" class="form-select form-select-sm" onchange="location.href='?search_keyword={{search_keyword}}&status='+this.value">
+                    <select id="status" class="form-select form-select-sm" onchange="location.href='?search_keyword={{ search_keyword|urlencode }}&status='+this.value">
                         <option value="" {% if status == ''%}selected{% endif %}>전체</option>
                         <option value="0" {% if status == '0'%}selected{% endif %}>주문요청</option>
                         <option value="1" {% if status == '1'%}selected{% endif %}>주문완료</option>
@@ -113,12 +163,12 @@
                     <table class="table table-sm table-hover">
                         <thead>
                         <tr>
-                            <th>주문날짜 <a href="?search_keyword={{search_keyword}}&sort=order_date&order={% if order == 'asc' and sort == 'order_date' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'order_date' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
-                            <th>회원 <a href="?search_keyword={{search_keyword}}&sort=customer__name&order={% if order == 'asc' and sort == 'customer__name' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'customer__name' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
-                            <th>주문내용 <a href="?search_keyword={{search_keyword}}&sort=order_name&order={% if order == 'asc' and sort == 'order_name' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'order_name' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
+                            <th>주문날짜 <a href="?search_keyword={{ search_keyword|urlencode }}&sort=order_date&order={% if order == 'asc' and sort == 'order_date' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'order_date' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
+                            <th>회원 <a href="?search_keyword={{ search_keyword|urlencode }}&sort=customer__name&order={% if order == 'asc' and sort == 'customer__name' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'customer__name' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
+                            <th>주문내용 <a href="?search_keyword={{ search_keyword|urlencode }}&sort=order_name&order={% if order == 'asc' and sort == 'order_name' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'order_name' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
                             <th>중요</th>
                             <th>잠금장치</th>
-                            <th>상태 <a href="?search_keyword={{search_keyword}}&sort=status&order={% if order == 'asc' and sort == 'status' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'status' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
+                            <th>상태 <a href="?search_keyword={{ search_keyword|urlencode }}&sort=status&order={% if order == 'asc' and sort == 'status' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'status' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
                             <th></th>
                         </tr>
                         </thead>
