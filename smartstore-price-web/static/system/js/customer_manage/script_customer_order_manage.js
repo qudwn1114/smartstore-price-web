@@ -2,10 +2,12 @@ const order_status = $('#order_status');
 
 const editModal = document.getElementById('editOrder');
 const editOrderId = document.getElementById('editOrderId');
+const editBuyerName = document.getElementById('editBuyerName');
 const editOrderName = document.getElementById('editOrderName');
 const editOrderDate = document.getElementById('editOrderDate');
 const editOrderStatus = $('#editOrderStatus');
 const editOrderNote = document.getElementById('editOrderNote');
+const editEngravingText = document.getElementById('editEngravingText');
 const editComment = document.getElementById('editComment');
 
 const btnEdit = document.getElementById('btnEdit');
@@ -149,6 +151,10 @@ $('#editOrder').on('hidden.bs.offcanvas', function () {
 });
 
 function editValidation(){
+    if(editBuyerName.value == ''){
+        editBuyerName.focus();
+        return false;
+    }
     if(editOrderName.value == ''){
         editOrderName.focus();
         return false;
@@ -163,7 +169,7 @@ function editValidation(){
 
 document.querySelectorAll('.btn-delete').forEach(function (btn) {
     btn.addEventListener('click', function () {
-        const orderId = this.dataset.orderId;
+        const orderId = this.dataset.id;
         const orderName = this.dataset.order_name;
         customConfirm({
             title: `주문 삭제 하시겠습니까?`,
@@ -208,9 +214,11 @@ document.querySelectorAll('.btn-edit-order').forEach(function (el) {
         originalCustomerName = this.dataset.customer_name;
         selectedCustomerPhone = this.dataset.customer_phone;
         editOrderId.value = this.dataset.id;
+        editBuyerName.value = this.dataset.buyer_name;
         editOrderName.value = this.dataset.order_name;
         editOrderDate.value = this.dataset.order_date;
         editOrderNote.value = this.dataset.order_note;
+        editEngravingText.value = this.dataset.engraving_text;
         editComment.value = this.dataset.comment || '';
         editOrderStatus.val(this.dataset.status).trigger('change');
         $('#editCustomers').selectpicker('val', this.dataset.customer_phone || '');

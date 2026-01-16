@@ -1,5 +1,6 @@
 const order_status = $('#order_status');
 const btnSubmit = document.getElementById("btnSubmit");
+const buyerName = document.getElementById('buyerName');
 const orderName = document.getElementById('orderName');
 const orderDate = document.getElementById('orderDate');
 const orderNote = document.getElementById('orderNote');
@@ -7,7 +8,9 @@ const orderStatus = $('#orderStatus');
 
 const editModal = document.getElementById('editOrder');
 const editOrderId = document.getElementById('editOrderId');
+const editBuyerName = document.getElementById('editBuyerName');
 const editOrderName = document.getElementById('editOrderName');
+const editEngravingText = document.getElementById('editEngravingText');
 const editOrderDate = document.getElementById('editOrderDate');
 const editOrderStatus = $('#editOrderStatus');
 const editOrderNote = document.getElementById('editOrderNote');
@@ -20,6 +23,22 @@ const btnDelete = document.getElementById('btnDelete');
 let syncing = false;
 let originalCustomerName = null;
 let selectedCustomerPhone = null;
+
+document.querySelectorAll('.card-clickable').forEach(card => {
+    card.addEventListener('click', () => {
+        const status = card.dataset.status;
+        const params = new URLSearchParams(window.location.search);
+
+        params.set('status', status);
+
+        // 검색어 유지
+        if (!params.get('search_keyword')) {
+        params.delete('search_keyword');
+        }
+
+        window.location.search = params.toString();
+    });
+});
 
 $('#customers').selectpicker({
   container: '#createOrder .offcanvas-body'
@@ -232,7 +251,7 @@ $('#createOrder').on('shown.bs.offcanvas', function () {
     originalCustomerName = null;
     selectedCustomerPhone = null;
     $(this).find('form')[0].reset();
-    orderName.focus();
+    buyerName.focus();
     $('#customers').selectpicker('val', '');
 });
 
@@ -244,6 +263,10 @@ $('#editOrder').on('hidden.bs.offcanvas', function () {
 
 //유효성 체크 함수
 function validation(){
+    if(buyerName.value == ''){
+        buyerName.focus();
+        return false;
+    }
     if(orderName.value == ''){
         orderName.focus();
         return false;
@@ -256,6 +279,10 @@ function validation(){
 }
 
 function editValidation(){
+    if(editBuyerName.value == ''){
+        editBuyerName.focus();
+        return false;
+    }
     if(editOrderName.value == ''){
         editOrderName.focus();
         return false;
@@ -333,7 +360,7 @@ btnSubmit.addEventListener("click", () => {
 
 document.querySelectorAll('.btn-delete').forEach(function (btn) {
     btn.addEventListener('click', function () {
-        const orderId = this.dataset.orderId;
+        const orderId = this.dataset.id;
         const orderName = this.dataset.order_name;
         customConfirm({
             title: `주문 삭제 하시겠습니까?`,
@@ -378,9 +405,11 @@ document.querySelectorAll('.btn-edit-order').forEach(function (el) {
         originalCustomerName = this.dataset.customer_name;
         selectedCustomerPhone = this.dataset.customer_phone;
         editOrderId.value = this.dataset.id;
+        editBuyerName.value = this.dataset.buyer_name;
         editOrderName.value = this.dataset.order_name;
         editOrderDate.value = this.dataset.order_date;
         editOrderNote.value = this.dataset.order_note;
+        editEngravingText.value = this.dataset.engraving_text;
         editComment.value = this.dataset.comment || '';
         editOrderStatus.val(this.dataset.status).trigger('change');
         $('#editCustomers').selectpicker('val', this.dataset.customer_phone || '');

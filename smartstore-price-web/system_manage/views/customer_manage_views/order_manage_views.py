@@ -64,11 +64,9 @@ class OrderManageView(View):
             query = Q()
 
         if search_keyword:
-            search_q = Q(customer__name__icontains=search_keyword)
-            if search_keyword.isdigit():
-
-                search_q |= Q(customer__phone=search_keyword)
-            query &= search_q
+            query &= (
+                Q(buyer_name__icontains=search_keyword) | Q(order_name__icontains=search_keyword)
+            )
 
         queryset = Order.objects.select_related('customer').filter(query).order_by(*ordering)
         if excel:
@@ -91,6 +89,9 @@ class OrderManageView(View):
     
     @method_decorator(permission_required(raise_exception=True))
     def post(self, request: HttpRequest, *args, **kwargs):
+        buyer_name = request.POST['buyer_name'].strip()
+        if buyer_name == '':
+            return JsonResponse({'message': '이름을 입력해주세요.'}, status=400)
         order_name = request.POST['order_name'].strip()
         if order_name == '':
             return JsonResponse({'message': '주문명을 입력해주세요.'}, status=400)
@@ -98,6 +99,7 @@ class OrderManageView(View):
         if not validate_birth(order_date):
             return JsonResponse({'message': '주문날짜 형식 오류'}, status=400)
         order_note = request.POST['order_note'].strip()
+        engraving_text = request.POST['engraving_text'].strip()
         option = request.POST['option']
         if option not in ['0', '1', '2']:
             return JsonResponse({'message': '옵션 형식 오류'}, status=400)
@@ -124,9 +126,11 @@ class OrderManageView(View):
                     customer = None
 
                 Order.objects.create(
+                    buyer_name = buyer_name,
                     order_name = order_name,
                     order_date = order_date,
                     order_note = order_note,
+                    engraving_text = engraving_text,
                     option = option,
                     status = status,
                     customer = customer,
@@ -144,6 +148,9 @@ def edit_order(request):
         order = Order.objects.get(id=order_id)
     except Order.DoesNotExist:
         return JsonResponse({'message': 'Order not found.'}, status=400)
+    buyer_name = request.POST['buyer_name'].strip()
+    if buyer_name == '':
+        return JsonResponse({'message': '이름을 입력해주세요.'}, status=400)
     order_name = request.POST['order_name'].strip()
     if order_name == '':
         return JsonResponse({'message': '주문명을 입력해주세요.'}, status=400)
@@ -151,6 +158,7 @@ def edit_order(request):
     if not validate_birth(order_date):
         return JsonResponse({'message': '주문날짜 형식 오류'}, status=400)
     order_note = request.POST['order_note'].strip()
+    engraving_text = request.POST['engraving_text'].strip()
     option = request.POST['option']
     if option not in ['0', '1', '2']:
         return JsonResponse({'message': '옵션 형식 오류'}, status=400)
@@ -169,16 +177,18 @@ def edit_order(request):
                     return JsonResponse({'message': '전화번호 형식 오류'}, status=400)
                 customer, created = Customer.objects.get_or_create(phone=customer_phone)
                 if created:
-                    customer.name = customer_name if customer_name else '이름없음'
+                    customer.name = customer_name if customer_name else buyer_name
                 elif customer_name and customer.name != customer_name:
                     customer.name = customer_name
                 customer.save()
             else:
                 customer = None
-
+            
+            order.buyer_name = buyer_name
             order.order_name = order_name
             order.order_date = order_date
             order.order_note = order_note
+            order.engraving_text = engraving_text
             order.option = option
             order.status =status
             order.comment = comment
@@ -239,7 +249,7 @@ class CustomerOrderManageView(View):
         customer = get_object_or_404(Customer, pk=customer_id)
         context['customer'] = customer
         
-        context['active_menu1'] = 'order'
+        context['active_menu1'] = 'customer'
         search_keyword = request.GET.get('search_keyword', '').strip()
         context['search_keyword'] = search_keyword
 
@@ -297,8 +307,10 @@ def export_orders_excel(queryset):
     headers = [
         '주문날짜',
         '회원명',
-        '전화번호',
+        '회원전화번호',
+        '이름',
         '주문내용',
+        '각인',
         '중요',
         '잠금장치',
         '비고',
@@ -327,10 +339,12 @@ def export_orders_excel(queryset):
     for obj in queryset:
         ws.append([
             obj.order_date,
-            obj.customer.name if obj.customer else '미등록',
+            obj.customer.name if obj.customer else '',
             obj.customer.phone if obj.customer else '',
+            obj.buyer_name,
             obj.order_name,
-            obj.order_note or '',
+            obj.engraving_text,
+            obj.order_note,
             OPTION_MAP.get(obj.option, '알수없음'),
             obj.comment or '',
             STATUS_MAP.get(obj.status, '알수없음'),

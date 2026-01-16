@@ -13,7 +13,23 @@
         <!-- Hoverable Table rows -->
         <div class="card">
             <div class="card-header d-flex align-items-center justify-content-between">
-                <h5 class="card-title">{{customer.name}} 고객님의 주문 정보 <span class="badge bg-label-primary rounded-pill">{{total_count|intcomma}} 건</span></h5>
+                <h5 class="card-title">{{customer.name}} 고객님의 주문 정보 
+                  <span class="badge 
+                                {% if status == '' %}
+                                  bg-label-secondary
+                                {% elif status == '0' %}
+                                  bg-label-primary
+                                {% elif status == '1' %}
+                                  bg-label-warning
+                                {% elif status == '2' %}
+                                  bg-label-success
+                                {% elif status == '3' %}
+                                  bg-label-danger
+                                {% else %}
+                                  bg-label-secondary
+                                {% endif %}
+                                rounded-pill">{{total_count|intcomma}} 건</span>
+                </h5>
                 <div class="d-flex align-items-center gap-2">
                     <button type="button" class="btn btn-outline-secondary btn-sm flex-shrink-0" onclick="excelExport();">
                       <i class="ri-upload-2-line me-2"></i>다운로드
@@ -33,10 +49,10 @@
                         <thead>
                         <tr>
                             <th>주문날짜 <a href="?sort=order_date&order={% if order == 'asc' and sort == 'order_date' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'order_date' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
-                            <th>회원</th>
-                            <th>주문내용  <a href="?sort=order_name&order={% if order == 'asc' and sort == 'order_name' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'order_name' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
+                            <th>이름</th>
+                            <th>(잠금장치) 주문내용</th>
+                            <th>각인</th>
                             <th>중요</th>
-                            <th>잠금장치</th>
                             <th>상태 <a href="?sort=status&order={% if order == 'asc' and sort == 'status' %}desc{% else %}asc{% endif %}&status={{status}}">{% if sort == 'status' %}{% if order == 'desc' %}<i class="ri-sort-desc ms-2"></i>{% else %}<i class="ri-sort-asc ms-2"></i>{% endif %}{% else %}<i class="ri-arrow-up-down-line ms-2"></i>{% endif %}</a></th>
                             <th></th>
                         </tr>
@@ -45,33 +61,36 @@
                         {% if page_obj %}
                             {% for i in page_obj %}
                             <tr>  
-                            <td>
-                                <span class="text-nowrap cursor-pointer btn-edit-order" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-order_note="{{i.order_note|default:''}}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}" data-option="{{ i.option }}">{{i.order_date}}</span>
-                            </td>                                
-                            <td>
-                              <span class="cursor-pointer btn-edit-order"data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-order_note="{{i.order_note|default:''}}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}" data-option="{{ i.option }}">
-                                {% if i.customer %}
-                                  {{ i.customer.name }}
-                                {% else %}
-                                  미등록
-                                {% endif %}
-                                {% if i.customer and i.customer.comment %}
-                                  <i class="ri-information-line" data-bs-toggle="tooltip" data-bs-html="true" title="회원설명:<br>{{ i.customer.comment|linebreaksbr|escape }}"></i>
-                                {% endif %}
+                            <td class="cursor-pointer btn-edit-order" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-buyer_name="{{ i.buyer_name }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-order_note="{{i.order_note|default:''}}" data-engraving_text="{{ i.engraving_text }}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}" data-option="{{ i.option }}">
+                              <span class="text-nowrap">
+                                {{ i.order_date|date:"Y년 n월 j일" }}<br>
+                                <small>{{ i.order_date|date:"l" }}</small>
                               </span>
                             </td>
-                            <td><a class="text-heading text-truncate btn-edit-order" href="javascript:;" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-order_note="{{i.order_note|default:''}}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}" data-option="{{ i.option }}">{{i.order_name}}</a></td>
-                            <td><span class="cursor-pointer btn-edit-order" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-order_note="{{i.order_note|default:''}}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}" data-option="{{ i.option }}">{{i.order_note|default:''}}</span></td>
-                            <td>
-                              {% if i.option == '0' %}
-                              <span class="badge bg-label-secondary">없음</span>
-                              {% elif i.option == '1' %}
-                              <span class="badge bg-label-primary">환산</span>
-                              {% elif i.option == '2' %}
-                              <span class="badge bg-label-warning">별도</span>
-                              {% else %}
-                              <span class="badge bg-label-danger">알수없음</span>
-                              {% endif %}
+                            <td class="cursor-pointer btn-edit-order"data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-buyer_name="{{ i.buyer_name }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-order_note="{{i.order_note|default:''}}" data-engraving_text="{{ i.engraving_text }}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}" data-option="{{ i.option }}">
+                              <span>{{i.buyer_name}}</span>
+                            </td>
+                            <td class="cursor-pointer btn-edit-order" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-buyer_name="{{ i.buyer_name }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-order_note="{{i.order_note|default:''}}" data-engraving_text="{{ i.engraving_text }}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}" data-option="{{ i.option }}">
+                              <span class="text-truncate d-flex align-items-center text-heading">
+                                <div class="avatar-wrapper">
+                                  <div class="avatar avatar-sm me-3">
+                                    {% if i.option == '0' %}
+                                      <strong class="avatar-initial rounded-circle bg-label-secondary">없음</strong>
+                                    {% elif i.option == '1' %}
+                                      <strong class="avatar-initial rounded-circle bg-label-primary">환산</strong>
+                                    {% elif i.option == '2' %}
+                                      <strong class="avatar-initial rounded-circle bg-label-warning">별도</strong>
+                                    {% endif %}                                    
+                                  </div>
+                                </div>
+                                {{i.order_name}}
+                              </span>
+                            </td>
+                            <td class="cursor-pointer btn-edit-order" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-buyer_name="{{ i.buyer_name }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-order_note="{{i.order_note|default:''}}" data-engraving_text="{{ i.engraving_text }}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}" data-option="{{ i.option }}">
+                              <span class="badge bg-label-info">{{i.engraving_text}}</span>
+                            </td>
+                            <td class="cursor-pointer btn-edit-order" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-buyer_name="{{ i.buyer_name }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-order_note="{{i.order_note|default:''}}" data-engraving_text="{{ i.engraving_text }}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}" data-option="{{ i.option }}">
+                              <span class="badge bg-label-danger">{{i.order_note|default:''}}</span>
                             </td>
                             <td>
                                 <select class="select2 select-event-label form-select form-select-sm select2-order-status" data-order-id="{{ i.id }}" data-prev-status="{{ i.status }}">
@@ -85,8 +104,8 @@
                                 <div class="dropdown">
                                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown"><i class="ri-more-2-line"></i></button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item btn-edit-order" href="javascript:;" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-order_note="{{i.order_note|default:''}}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}" data-option="{{ i.option }}"><i class="ri-pencil-line me-1"></i> 수정</a>
-                                    <a class="dropdown-item btn-delete" href="javascript:;" data-order-id="{{i.id}}" data-order_name="{{i.order_name}}"><i class="ri-delete-bin-line me-1"></i> 삭제</a>
+                                    <a class="dropdown-item btn-edit-order" href="javascript:;" data-bs-toggle="offcanvas" data-bs-target="#editOrder" data-id="{{ i.id }}" data-buyer_name="{{ i.buyer_name }}" data-order_name="{{ i.order_name }}" data-order_date="{{ i.order_date|date:'Y-m-d' }}" data-order_note="{{i.order_note|default:''}}" data-engraving_text="{{ i.engraving_text }}" data-status="{{ i.status }}" data-customer_name="{{ i.customer.name|default:'' }}" data-customer_phone="{{ i.customer.phone|default:'' }}" data-comment="{{ i.comment|default:'' }}" data-option="{{ i.option }}"><i class="ri-pencil-line me-1"></i> 수정</a>
+                                    <a class="dropdown-item btn-delete" href="javascript:;" data-id="{{ i.id }}" data-order_name="{{ i.order_name }}"><i class="ri-delete-bin-line me-1"></i> 삭제</a>
                                 </div>
                                 </div>
                             </td>
@@ -94,7 +113,7 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td class="text-center" colspan='5'>데이터가 없습니다.</td>
+                                <td class="text-center" colspan='7'>데이터가 없습니다.</td>
                             </tr>
                         {% endif %}              
                         </tbody>
@@ -111,32 +130,39 @@
             </div>
             <div class="offcanvas-body mx-0 flex-grow-0 h-100">
               <form id="editOrderForm">
-                <h6>필수입력</h6>
                 <input type="hidden" id="editOrderId" name="order_id" />
                 <div class="form-floating form-floating-outline mb-3">
                   <input type="text" class="form-control" placeholder="YYYY-MM-DD" id="editOrderDate" name="order_date" value="{% now 'Y-m-d' %}"/>
-                  <label for="editOrderDate">주문날짜자</label>
+                  <label for="editOrderDate">주문날짜</label>
                 </div>
                 <div class="form-floating form-floating-outline mb-3">
-                  <input type="text" class="form-control" id="editOrderName" placeholder="주문내용" name="order_name" aria-label="주문내용" />
+                  <input type="text" class="form-control" id="editBuyerName" placeholder="이름" name="buyer_name" maxlength="50"/>
+                  <label for="editBuyerName">이름 *</label>
+                </div>
+                <div class="form-floating form-floating-outline mb-3">
+                  <input type="text" class="form-control" id="editOrderName" placeholder="주문내용" name="order_name" maxlength="100"/>
                   <label for="editOrderName">주문내용</label>
                 </div>
                 <div class="form-floating form-floating-outline mb-3">
-                    <input type="text" id="editOrderNote" name="order_note" class="form-control" placeholder="중요"/>
+                    <input type="text" id="editEngravingText" name="engraving_text" class="form-control" placeholder="각인" maxlength="20"/>
+                    <label for="editEngravingText">각인</label>
+                </div>
+                <div class="form-floating form-floating-outline mb-3">
+                    <input type="text" id="editOrderNote" name="order_note" class="form-control" placeholder="중요" maxlength="100"/>
                     <label for="editOrderNote">중요</label>
                 </div>
                 <div class="row mb-3">
                   <div class="col">
                     <small class="fw-medium d-block">잠금장치</small>
-                    <div class="form-check form-check-inline mt-2">
+                    <div class="form-check form-check-inline mt-2 form-check-secondary">
                       <input class="form-check-input" type="radio" name="option" id="editRadio1" value="0"/>
                       <label class="form-check-label" for="editRadio1">없음</label>
                     </div>
-                    <div class="form-check form-check-inline">
+                    <div class="form-check form-check-inline form-check-primary">
                       <input class="form-check-input" type="radio" name="option" id="editRadio2" value="1" />
                       <label class="form-check-label" for="editRadio2">환산</label>
                     </div>
-                    <div class="form-check form-check-inline">
+                    <div class="form-check form-check-inline form-check-warning">
                       <input class="form-check-input" type="radio" name="option" id="editRadio3" value="2"/>
                       <label class="form-check-label" for="editRadio3">별도</label>
                     </div>
@@ -151,8 +177,11 @@
                     </select>
                     <label for="editOrderStatus">상태</label>
                 </div>
+                <div class="form-floating form-floating-outline mb-3">
+                    <textarea class="form-control h-px-75" name="comment" id="editComment" placeholder="비고"></textarea>
+                    <label for="editComment">비고</label>
+                </div>
                 <hr>
-                <h6>선택입력</h6>
                 <div class="form-floating form-floating-outline form-floating-bootstrap-select mb-3">
                     <select id="editCustomers" class="selectpicker w-100" data-style="btn-default" data-live-search="true" data-show-subtext="true" title="고객명 또는 전화번호로 검색해주세요.">
                         <option value="">미등록</option>
@@ -169,10 +198,6 @@
                 <div class="form-floating form-floating-outline mb-3">
                     <input type="tel" id="editCustomerPhone" name="customer_phone" class="form-control number-only" placeholder="고객 연락처" maxlength="11"/>
                     <label for="editCustomerPhone">고객 연락처</label>
-                </div>
-                <div class="form-floating form-floating-outline mb-3">
-                    <textarea class="form-control h-px-75" name="comment" id="editComment" placeholder="주문 비고"></textarea>
-                    <label for="editComment">주문 비고</label>
                 </div>
                 <div class="mb-4 d-flex justify-content-sm-between justify-content-start my-6 gap-2">
                     <div class="d-flex">
@@ -210,5 +235,5 @@
     });
 </script>
 <script src="{% static 'js/script_pagination.js' %}"></script>
-<script src="{% static 'system/js/customer_manage/script_customer_order_manage.js' %}?v=6"></script>
+<script src="{% static 'system/js/customer_manage/script_customer_order_manage.js' %}?v=7"></script>
 {% endblock javascripts %}

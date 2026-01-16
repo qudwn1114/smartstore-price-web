@@ -146,10 +146,12 @@ class Order(models.Model):
     ]
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, related_name='orders', null=True)
     order_name = models.CharField(max_length=100, verbose_name='주문명')
+    buyer_name = models.CharField(max_length=50, default='')
     order_note = models.CharField(max_length=100, verbose_name='중요', default='')
+    engraving_text = models.CharField(max_length=20, default='', verbose_name='각인 문구')
     option = models.CharField(max_length=10, choices=OPTION_CHOICES, verbose_name='옵션상태', default='0')
     order_date = models.DateField(verbose_name='주문일')
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, verbose_name='주문상태', default='0')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, verbose_name='주문상태', default='0', db_index=True)
     comment = models.TextField(null=True, verbose_name='비고')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='생성일')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='수정일')
